@@ -1,19 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Text;
-using System.Linq;
-using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using System.Diagnostics;
-using LanguageExt.Common;
+﻿using Microsoft.Extensions.Configuration;
 using Broadcast.Prep.Client;
 
 Console.WriteLine("Starting");
 
 IConfigurationRoot? configuration = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json")
-        .Build();
+    .AddJsonFile("appsettings.json")
+    .Build();
 
 Settings settings = new();
 configuration.Bind("Settings", settings);
@@ -39,8 +31,6 @@ if(!targetFile.Exists)
 Console.WriteLine($"{targetFileFullPath} found.");
 
 targetFile.CopyTo($"{settings.PagesDestinationFolder}\\Current.pages", true);
-targetFile.CopyTo($"{settings.PagesDestinationFolder}\\Announcements.pages", true);
-targetFile.CopyTo($"{settings.PagesDestinationFolder}\\Current-WordsOfReflection.pages", true);
 
 // write date to date txt file
 if (File.Exists(settings.DateTxtPath))
@@ -57,6 +47,6 @@ var titleAndDescription = settings.TitleAndDescriptionTemplate
 File.WriteAllText(settings.TitleAndDescriptionTxtPath, titleAndDescription);
 
 
-Console.WriteLine("Done");
+Console.WriteLine("Done. Press any key to exit.");
 Console.ReadKey();
 Environment.Exit(0);
