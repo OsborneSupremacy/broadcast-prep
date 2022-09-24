@@ -15,6 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BroadCast.Prep.Models\BroadCast.Prep.Models.csproj" />
+    <ProjectReference Include="..\BroadCast.Prep.Service\BroadCast.Prep.Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

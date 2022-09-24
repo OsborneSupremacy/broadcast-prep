@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Broadcast.Prep.Client;
+namespace BroadCast.Prep.Models;
 
 public record Settings
 {

@@ -1,52 +1,68 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Broadcast.Prep.Client;
+using BroadCast.Prep.Models;
+using BroadCast.Prep.Service;
+using LanguageExt.Common;
 
-Console.WriteLine("Starting");
+namespace BroadCast.Prep.Client;
 
-IConfigurationRoot? configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .Build();
-
-Settings settings = new();
-configuration.Bind("Settings", settings);
-
-var serviceDate = DateOnly.FromDateTime(DateTime.Today);
-while (serviceDate.DayOfWeek != DayOfWeek.Sunday)
-    serviceDate = serviceDate.AddDays(1);
-
-var targetFileName = $"{serviceDate:yyyy-MM-dd} FINAL.pages";
-var targetFileFullPath = $"{settings.PagesSourceFolder}\\{targetFileName}";
-
-Console.WriteLine($"Looking for {targetFileName}");
-
-var targetFile = new FileInfo(targetFileFullPath);
-
-if(!targetFile.Exists)
+public class Program
 {
-    Console.WriteLine($"{targetFileFullPath} not found!");
-    Console.ReadKey();
-    Environment.Exit(1);
-}
+    public static void Main(string[] args)
+    {
+        Console.WriteLine("Starting");
 
-Console.WriteLine($"{targetFileFullPath} found.");
+        IConfigurationRoot? configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
 
-targetFile.CopyTo($"{settings.PagesDestinationFolder}\\Current.pages", true);
+        Settings settings = new();
+        configuration.Bind("Settings", settings);
 
-// write date to date txt file
-if (File.Exists(settings.DateTxtPath))
-    File.Delete(settings.DateTxtPath);
-File.WriteAllText(settings.DateTxtPath, serviceDate.ToLongDateString());
+        var exitCode = GetOperation(args, settings).Match(
+            op =>
+            {
+                return op.Invoke(settings).Match(
+                    success =>
+                    {
+                        Console.WriteLine("Done");
+                        return 0;
+                    },
+                    error =>
+                    {
+                        Console.WriteLine(error.Message);
+                        return 1;
+                    }
+                );
+            },
+            error =>
+            {
+                Console.WriteLine(error.Message);
+                return 1;
+            }
+        );
 
-// write title and description file
-if (File.Exists(settings.TitleAndDescriptionTxtPath))
-    File.Delete(settings.TitleAndDescriptionTxtPath);
+        Console.WriteLine("Press any key to exit.");
+        Console.ReadKey();
+        Environment.Exit(0);
+    }
 
-var titleAndDescription = settings.TitleAndDescriptionTemplate
-    .Replace("{ServiceDate}", serviceDate.ToString("M/d/yyyy"));
+    public static Result<Func<Settings, Result<bool>>> GetOperation(string[] args, Settings settings)
+    {
+        if (args.Length == 0)
+            return new Result<Func<Settings, Result<bool>>>(new ArgumentException("No command line argument found"));
 
-File.WriteAllText(settings.TitleAndDescriptionTxtPath, titleAndDescription);
+        if (!int.TryParse(args[0], out var op))
+            return new Result<Func<Settings, Result<bool>>>(new ArgumentException("Command line argument must be an integer"));
 
+        return op switch
+        {
+            0 => _initialBulletinPrepServiceDelegate,
+            _ => new Result<Func<Settings, Result<bool>>>(new ArgumentException("Command line argument must correspond to defined process"))
+        };
+    }
 
-Console.WriteLine("Done. Press any key to exit.");
-Console.ReadKey();
-Environment.Exit(0);
+    private static Func<Settings, Result<bool>> _initialBulletinPrepServiceDelegate = (Settings settings) => {
+        return InitialBulletinPrepService.Process(settings);
+    };
+
+ }
