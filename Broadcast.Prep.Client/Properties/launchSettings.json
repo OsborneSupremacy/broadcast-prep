@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Broadcast.Prep.Client": {
+      "commandName": "Project",
+      "commandLineArgs": "0"
+    }
+  }
+}
