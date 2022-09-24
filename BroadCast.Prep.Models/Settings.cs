@@ -13,20 +13,31 @@ public record Settings
     public string TitleAndDescriptionTxtPath { get; init; } = default!;
 
     public string TitleAndDescriptionTemplate { get; init; } = default!;
+
+    public List<string> PdfsToConvertToImages { get; init; } = default!;
 }
 
 public class SettingsValidator : AbstractValidator<Settings>
 {
     public SettingsValidator()
     {
-        RuleFor(x => x.PagesSourceFolder).NotEmpty();
-        RuleFor(x => x.PagesDestinationFolder).NotEmpty();
-        RuleFor(x => x.DateTxtPath).NotEmpty();
+        RuleFor(x => x.PagesSourceFolder)
+            .NotEmpty()
+            .Must(x => new DirectoryInfo(x).Exists);
+
+        RuleFor(x => x.PagesDestinationFolder)
+            .NotEmpty()
+            .Must(x => new DirectoryInfo(x).Exists);
+
+        RuleFor(x => x.DateTxtPath)
+            .NotEmpty()
+            .Must(x => new FileInfo(x)?.Directory?.Exists ?? false);
+
         RuleFor(x => x.TitleAndDescriptionTxtPath).NotEmpty();
         RuleFor(x => x.TitleAndDescriptionTemplate).NotEmpty();
 
-        RuleFor(x => x.PagesSourceFolder).Must(x => new DirectoryInfo(x).Exists);
-        RuleFor(x => x.PagesDestinationFolder).Must(x => new DirectoryInfo(x).Exists);
-        RuleFor(x => x.DateTxtPath).Must(x => new FileInfo(x)?.Directory?.Exists ?? false);
+        RuleForEach(x => x.PdfsToConvertToImages)
+            .NotEmpty()
+            .Must(x => new FileInfo(x)?.Directory?.Exists ?? false);
     }
 }

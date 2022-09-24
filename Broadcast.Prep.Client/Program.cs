@@ -19,7 +19,7 @@ public class Program
         var settings = configuration
             .GetAndValidateTypedSection("Settings", new SettingsValidator());
 
-        var exitCode = GetOperation(args, settings).Match(
+        var exitCode = GetOperation(args).Match(
             op =>
             {
                 return op.Invoke(settings).Match(
@@ -47,7 +47,7 @@ public class Program
         Environment.Exit(0);
     }
 
-    public static Result<Func<Settings, Result<bool>>> GetOperation(string[] args, Settings settings)
+    public static Result<Func<Settings, Result<bool>>> GetOperation(string[] args)
     {
         if (args.Length == 0)
             return new Result<Func<Settings, Result<bool>>>(new ArgumentException("No command line argument found"));
@@ -58,6 +58,7 @@ public class Program
         return op switch
         {
             0 => _initialBulletinPrepServiceDelegate,
+            1 => _pdfConversionServiceDelegate,
             _ => new Result<Func<Settings, Result<bool>>>(new ArgumentException("Command line argument must correspond to defined process"))
         };
     }
@@ -66,4 +67,8 @@ public class Program
         return InitialBulletinPrepService.Process(settings);
     };
 
- }
+    private static Func<Settings, Result<bool>> _pdfConversionServiceDelegate = (Settings settings) => {
+        return PdfConversionService.Process(settings);
+    };
+
+}
