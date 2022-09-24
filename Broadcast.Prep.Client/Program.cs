@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using BroadCast.Prep.Models;
 using BroadCast.Prep.Service;
+using BroadCast.Prep.Functions;
 using LanguageExt.Common;
 
 namespace BroadCast.Prep.Client;
 
-public class Program
+public class Program 
 {
     public static void Main(string[] args)
     {
@@ -15,8 +16,8 @@ public class Program
             .AddJsonFile("appsettings.json")
             .Build();
 
-        Settings settings = new();
-        configuration.Bind("Settings", settings);
+        var settings = configuration
+            .GetAndValidateTypedSection("Settings", new SettingsValidator());
 
         var exitCode = GetOperation(args, settings).Match(
             op =>

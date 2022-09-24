@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BroadCast.Prep.Functions\BroadCast.Prep.Functions.csproj" />
     <ProjectReference Include="..\BroadCast.Prep.Models\BroadCast.Prep.Models.csproj" />
     <ProjectReference Include="..\BroadCast.Prep.Service\BroadCast.Prep.Service.csproj" />
   </ItemGroup>
