@@ -27,10 +27,12 @@ public static class PdfConversionService
 
         var firstPage = pdfDocument.Pages.First();
 
-        int height = (int)firstPage.Height * 3;
-        int width = (int)firstPage.Width * 3;
+        using var pageBitmap = new PDFiumBitmap(
+            (int)firstPage.Width * 3,
+            (int)firstPage.Height * 3, 
+            true
+        );
 
-        using var pageBitmap = new PDFiumBitmap(width, height, true);
         firstPage.Render(pageBitmap);
         using var pageImage = Image.Load(pageBitmap.AsBmpStream());
 
