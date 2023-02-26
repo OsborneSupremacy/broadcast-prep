@@ -1,26 +1,22 @@
 ﻿using BroadCast.Prep.Models;
-using LanguageExt.Common;
+using OsborneSupremacy.Extensions.AspNet;
 
 namespace BroadCast.Prep.Service;
 
 public static class InitialBulletinPrepService
 {
-    public static Result<bool> Process(Settings settings)
+    public static Outcome<bool> Process(Settings settings)
     {
-        return FindSourceDoc(settings).Match(
-            sourceData =>
-            {
-                CopyToTargetAndCreateTxtFiles(settings, sourceData);
-                return true;
-            },
-            error =>
-            {
-                return new Result<bool>(error);
-            }
-        );
+        var sourceData = FindSourceDoc(settings);
+
+        if (sourceData.IsFaulted)
+            return new Outcome<bool>(sourceData.Exception);
+
+        CopyToTargetAndCreateTxtFiles(settings, sourceData.Value);
+        return true;
     }
 
-    public static Result<SourceFileData> FindSourceDoc(Settings settings)
+    public static Outcome<SourceFileData> FindSourceDoc(Settings settings)
     {
         var serviceDate = DateOnly.FromDateTime(DateTime.Today);
         while (serviceDate.DayOfWeek != DayOfWeek.Sunday)
@@ -34,9 +30,10 @@ public static class InitialBulletinPrepService
         var targetFile = new FileInfo(sourceFileFullPath);
 
         if (!targetFile.Exists)
-            return new Result<SourceFileData>(new FileNotFoundException($"{sourceFileFullPath} not found!"));
+            return new Outcome<SourceFileData>(new FileNotFoundException($"{sourceFileFullPath} not found!"));
 
-        Console.WriteLine($"{sourceFileFullPath} found.");
+        Console.WriteLine($"{sourceFileFullPath} found. Press any key to continue.");
+        Console.ReadKey();
 
         return new SourceFileData(targetFile, serviceDate);
     }

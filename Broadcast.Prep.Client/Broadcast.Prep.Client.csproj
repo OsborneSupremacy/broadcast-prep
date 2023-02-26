@@ -2,20 +2,19 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LanguageExt.Core" Version="4.2.9" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+    <PackageReference Include="OsborneSupremacy.Extensions.AspNet" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BroadCast.Prep.Functions\BroadCast.Prep.Functions.csproj" />
     <ProjectReference Include="..\BroadCast.Prep.Models\BroadCast.Prep.Models.csproj" />
     <ProjectReference Include="..\BroadCast.Prep.Service\BroadCast.Prep.Service.csproj" />
   </ItemGroup>

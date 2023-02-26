@@ -1,5 +1,5 @@
 ﻿using BroadCast.Prep.Models;
-using LanguageExt.Common;
+using OsborneSupremacy.Extensions.AspNet;
 using PDFiumSharp;
 using SixLabors.ImageSharp;
 
@@ -7,7 +7,7 @@ namespace BroadCast.Prep.Service;
 
 public static class PdfConversionService
 {
-    public static Result<bool> Process(Settings settings)
+    public static Outcome<bool> Process(Settings settings)
     {
         try
         {
@@ -17,7 +17,7 @@ public static class PdfConversionService
         }
         catch (Exception ex)
         {
-            return new Result<bool>(ex);
+            return new Outcome<bool>(ex);
         };
     }
 
