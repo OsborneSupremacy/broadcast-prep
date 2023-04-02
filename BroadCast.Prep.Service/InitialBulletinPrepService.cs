@@ -22,17 +22,23 @@ public static class InitialBulletinPrepService
         while (serviceDate.DayOfWeek != DayOfWeek.Sunday)
             serviceDate = serviceDate.AddDays(1);
 
-        var sourceFileName = $"{serviceDate:yyyy-MM-dd} FINAL.pages";
-        var sourceFileFullPath = Path.Combine(settings.PagesSourceFolder, sourceFileName);
+        var sourceFileSearchTerm = $"{serviceDate:yyyy-MM-dd}";
 
-        Console.WriteLine($"Looking for {sourceFileName}");
+        Console.WriteLine($"Looking for file like {sourceFileSearchTerm}");
 
-        var targetFile = new FileInfo(sourceFileFullPath);
+        var matchingFiles = new DirectoryInfo(settings.PagesSourceFolder)
+            .GetFiles()
+            .Where(f => f.Name.Contains(sourceFileSearchTerm));
 
-        if (!targetFile.Exists)
-            return new Outcome<SourceFileData>(new FileNotFoundException($"{sourceFileFullPath} not found!"));
+        if (!matchingFiles.Any())
+            return new Outcome<SourceFileData>(new FileNotFoundException($"No files containing `{sourceFileSearchTerm}` not found!"));
 
-        Console.WriteLine($"{sourceFileFullPath} found. Press any key to continue.");
+        if(matchingFiles.Count() > 1)
+            return new Outcome<SourceFileData>(new FileNotFoundException($"Multiple files containing `{sourceFileSearchTerm}` found!"));
+
+        var targetFile = matchingFiles.Single();
+
+        Console.WriteLine($"{targetFile.FullName} found. Press any key to continue.");
         Console.ReadKey();
 
         return new SourceFileData(targetFile, serviceDate);
