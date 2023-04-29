@@ -1,5 +1,9 @@
 ﻿using BroadCast.Prep.Models;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using OsborneSupremacy.Extensions.AspNet;
+using Spectre.Console;
+using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BroadCast.Prep.Service;
 
@@ -18,37 +22,67 @@ public static class InitialBulletinPrepService
 
     public static Outcome<SourceFileData> FindSourceDoc(Settings settings)
     {
-        var serviceDate = DateOnly.FromDateTime(DateTime.Today);
-        while (serviceDate.DayOfWeek != DayOfWeek.Sunday)
-            serviceDate = serviceDate.AddDays(1);
-
-        var sourceFileSearchTerm = $"{serviceDate:yyyy-MM-dd}";
-
-        Console.WriteLine($"Looking for file like {sourceFileSearchTerm}");
-
-        var matchingFiles = new DirectoryInfo(settings.PagesSourceFolder)
+        var files = new DirectoryInfo(settings.PagesSourceFolder)
             .GetFiles()
-            .Where(f => f.Name.Contains(sourceFileSearchTerm));
+            .OrderByDescending(x => x.CreationTimeUtc)
+            .ToDictionary(x => x.Name, x => new FileInfo(x.FullName));
 
-        if (!matchingFiles.Any())
-            return new Outcome<SourceFileData>(new FileNotFoundException($"No files containing `{sourceFileSearchTerm}` not found!"));
+        var fileName = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Select source file")
+                .AddChoices(files.Keys)
+            );
 
-        if(matchingFiles.Count() > 1)
-            return new Outcome<SourceFileData>(new FileNotFoundException($"Multiple files containing `{sourceFileSearchTerm}` found!"));
+        AnsiConsole.WriteLine($"You selected {fileName}.");
 
-        var targetFile = matchingFiles.Single();
+        DateOnly serviceDate =
+            ExtractDate(fileName)
+            ?? GetDateFromUser();
 
-        Console.WriteLine($"{targetFile.FullName} found. Press any key to continue.");
-        Console.ReadKey();
+        var targetFile = files[fileName];
 
         return new SourceFileData(targetFile, serviceDate);
     }
 
-    public static void CopyToTargetAndCreateTxtFiles(Settings settings, SourceFileData sourceData)
+    private static DateOnly? ExtractDate(string input)
+    {
+        Match match = Regex.Match(input, @"\d{4}-\d{2}-\d{2}");
+
+        if (match.Success && DateOnly.TryParse(match.Value, out DateOnly date))
+        {
+            AnsiConsole.WriteLine($"Service date extracted from file name: {date}");
+            return date;
+        }
+
+        return null;
+    }
+
+    public static DateOnly GetDateFromUser()
+    {
+        DateOnly date;
+
+        // Ask the user to enter a date in the format "yyyy-MM-dd".
+        string prompt = "Enter a date (yyyy-MM-dd): ";
+        string input = AnsiConsole.Prompt(new TextPrompt<string>(prompt));
+
+        // Attempt to parse the user's input as a DateOnly value.
+        while (!DateOnly.TryParse(input, out date))
+        {
+            // If the parsing fails, ask the user to enter a valid date.
+            AnsiConsole.MarkupLine($"[red]Invalid date format[/]. Please enter a date in the format [yellow]yyyy-MM-dd[/].");
+            input = AnsiConsole.Prompt(new TextPrompt<string>(prompt));
+        }
+
+        // Return the parsed date.
+        return date;
+    }
+
+    private static void CopyToTargetAndCreateTxtFiles(Settings settings, SourceFileData sourceData)
     {
         var targetFile = Path.Combine(settings.PagesDestinationFolder, "Current.pages");
 
         sourceData.File.CopyTo(targetFile, true);
+        AnsiConsole.WriteLine($"Copied file to {targetFile}");
 
         // write date to date txt file
         if (File.Exists(settings.DateTxtPath))
@@ -63,5 +97,6 @@ public static class InitialBulletinPrepService
             .Replace("{ServiceDate}", sourceData.Date.ToString("M/d/yyyy"));
 
         File.WriteAllText(settings.TitleAndDescriptionTxtPath, titleAndDescription);
+        AnsiConsole.WriteLine($"Updated title and description files.");
     }
 }

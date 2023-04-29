@@ -2,15 +2,14 @@
 using BroadCast.Prep.Models;
 using BroadCast.Prep.Service;
 using OsborneSupremacy.Extensions.AspNet;
+using Spectre.Console;
 
 namespace BroadCast.Prep.Client;
 
 public class Program 
 {
-    public static void Main(string[] args)
+    public static void Main()
     {
-        Console.WriteLine("Starting");
-
         IConfigurationRoot? configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
@@ -18,45 +17,68 @@ public class Program
         var settings = configuration
             .GetAndValidateTypedSection("Settings", new SettingsValidator());
 
-        var operation = GetOperation(args);
+        var keepProcessing = true;
 
-        if(operation.IsFaulted)
-        {
-            Console.WriteLine(operation.Exception.Message);
-            Environment.Exit(1);
-        };
-
-        var outcome = operation.Value.Invoke(settings);
-
-        if(outcome.IsFaulted)
-        {
-            Console.WriteLine(outcome.Exception.Message);
-            Environment.Exit(1);
+        while (keepProcessing) {
+            keepProcessing = Process(settings).Continue;
         }
 
-        Console.WriteLine("Press any key to exit.");
+        AnsiConsole.WriteLine("Goodbye.");
         Console.ReadKey();
         Environment.Exit(0);
     }
 
-    public static Outcome<Func<Settings, Outcome<bool>>> GetOperation(string[] args)
+    private static ProcessingResult Process(Settings settings)
     {
-        if (args.Length == 0)
-            return new Outcome<Func<Settings, Outcome<bool>>>(new ArgumentException("No command line argument found"));
+        var operation = GetOperation();
+        var result = operation(settings);
 
-        if (!int.TryParse(args[0], out var op))
-            return new Outcome<Func<Settings, Outcome<bool>>>(new ArgumentException("Command line argument must be an integer"));
-
-        return op switch
+        if(result.IsFaulted)
         {
-            0 => _initialBulletinPrepServiceDelegate,
-            1 => _pdfConversionServiceDelegate,
-            _ => new Outcome<Func<Settings, Outcome<bool>>>(new ArgumentException("Command line argument must correspond to defined process"))
+            AnsiConsole.WriteLine("The following error was encountered:");
+            AnsiConsole.WriteLine(result.Exception.Message);
+        }
+
+        return new()
+        {
+            Continue = AnsiConsole.Confirm("Is there anything else you want to do?")
         };
     }
 
-    private static readonly Func<Settings, Outcome<bool>> _initialBulletinPrepServiceDelegate = InitialBulletinPrepService.Process;
+    private static OperationDelegate GetOperation()
+    {
+        Dictionary<string, OperationDelegate> operations = new() {
+            { "Prepare bulletin", InitialBulletinPrepService.Process },
+            { "Convert PDFs to PNGs", PdfConversionService.Process },
+            { "Exit", (Settings settings) =>
+                {
+                    Environment.Exit(0);
+                    return new Outcome<bool>(true);
+                }
+            },
+        };
 
-    private static readonly Func<Settings, Outcome<bool>> _pdfConversionServiceDelegate = PdfConversionService.Process;
+        string opKey = string.Empty;
+        var confirmed = false;
+
+        while(!confirmed)
+        {
+            opKey = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Select operation")
+                    .AddChoices(operations.Keys)
+                );
+            confirmed = AnsiConsole.Confirm($"You selected {opKey}. Continue?");
+        }
+
+        return operations[opKey];
+    }
+
+    delegate Outcome<bool> OperationDelegate(Settings settings);
+
+    private readonly struct ProcessingResult
+    {
+        public required bool Continue { get; init; }
+    }
 
 }

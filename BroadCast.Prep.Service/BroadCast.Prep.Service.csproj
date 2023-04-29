@@ -10,6 +10,7 @@
     <PackageReference Include="Envoc.PDFiumSharp" Version="1.1.4" />
     <PackageReference Include="OsborneSupremacy.Extensions.AspNet" Version="3.1.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
+    <PackageReference Include="Spectre.Console" Version="0.46.0" />
   </ItemGroup>
 
   <ItemGroup>
