@@ -1,7 +1,7 @@
 ﻿using BroadCast.Prep.Models;
 using OsborneSupremacy.Extensions.AspNet;
 using PDFiumSharp;
-using SixLabors.ImageSharp;
+using Spectre.Console;
 
 namespace BroadCast.Prep.Service;
 
@@ -41,6 +41,6 @@ public static class PdfConversionService
             new SixLabors.ImageSharp.Formats.Png.PngEncoder()
         );
 
-        Console.WriteLine($"{new FileInfo(pdfFilePath).Name} converted to a .png");
+        AnsiConsole.WriteLine($"{new FileInfo(pdfFilePath).Name} converted to a .png");
     }
 }

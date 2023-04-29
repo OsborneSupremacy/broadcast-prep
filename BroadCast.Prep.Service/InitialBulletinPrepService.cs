@@ -1,9 +1,7 @@
 ﻿using BroadCast.Prep.Models;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using OsborneSupremacy.Extensions.AspNet;
 using Spectre.Console;
 using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BroadCast.Prep.Service;
 

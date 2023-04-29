@@ -24,7 +24,6 @@ public class Program
         }
 
         AnsiConsole.WriteLine("Goodbye.");
-        Console.ReadKey();
         Environment.Exit(0);
     }
 
