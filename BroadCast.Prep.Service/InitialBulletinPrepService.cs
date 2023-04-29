@@ -20,7 +20,7 @@ public static class InitialBulletinPrepService
         return true;
     }
 
-    public static Outcome<SourceFileData> FindSourceDoc(Settings settings)
+    private static Outcome<SourceFileData> FindSourceDoc(Settings settings)
     {
         var files = new DirectoryInfo(settings.PagesSourceFolder)
             .GetFiles()
@@ -57,24 +57,26 @@ public static class InitialBulletinPrepService
         return null;
     }
 
-    public static DateOnly GetDateFromUser()
+    private static DateOnly GetDateFromUser()
     {
-        DateOnly date;
-
-        // Ask the user to enter a date in the format "yyyy-MM-dd".
-        string prompt = "Enter a date (yyyy-MM-dd): ";
-        string input = AnsiConsole.Prompt(new TextPrompt<string>(prompt));
-
-        // Attempt to parse the user's input as a DateOnly value.
-        while (!DateOnly.TryParse(input, out date))
+        static DateOnly? TryGetDate()
         {
-            // If the parsing fails, ask the user to enter a valid date.
-            AnsiConsole.MarkupLine($"[red]Invalid date format[/]. Please enter a date in the format [yellow]yyyy-MM-dd[/].");
-            input = AnsiConsole.Prompt(new TextPrompt<string>(prompt));
+            var isValid = DateOnly.TryParse(
+                AnsiConsole.Prompt(new TextPrompt<string>("Enter a date (yyyy-MM-dd): ")),
+                out var date);
+
+            if (!isValid)
+                AnsiConsole.MarkupLine($"[red]Invalid date format[/]. Please enter a date in the format [yellow]yyyy-MM-dd[/].");
+
+            return isValid ? date : null;
         }
 
-        // Return the parsed date.
-        return date;
+        DateOnly? date = null;
+
+        while (date is null)
+            date = TryGetDate();
+
+        return date.Value;
     }
 
     private static void CopyToTargetAndCreateTxtFiles(Settings settings, SourceFileData sourceData)
