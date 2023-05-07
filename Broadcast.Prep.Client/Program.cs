@@ -57,19 +57,11 @@ public class Program
             },
         };
 
-        string opKey = string.Empty;
-        var confirmed = false;
-
-        while(!confirmed)
-        {
-            opKey = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("Select operation")
-                    .AddChoices(operations.Keys)
-                );
-            confirmed = AnsiConsole.Confirm($"You selected {opKey}. Continue?");
-        }
-
+        string opKey = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Select operation")
+                .AddChoices(operations.Keys)
+            );
         return operations[opKey];
     }
 
