@@ -11,8 +11,30 @@ public static class PdfConversionService
     {
         try
         {
+            List<FileInfo> pdfs = new();
             foreach (var pdf in settings.PdfsToConvertToImages)
-                Process(pdf);
+                pdfs.Add(new FileInfo(pdf));
+
+            var table = new Table();
+            table.AddColumn("PDF");
+            table.AddColumn("Last Modified");
+
+            foreach (var pdf in pdfs)
+            {
+                table.AddRow(
+                    pdf.Name,
+                    pdf.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")
+                );
+            }
+
+            AnsiConsole.Write(table);
+
+            if (AnsiConsole.Confirm("Proceed with conversion?"))
+            {
+                foreach (var pdf in pdfs)
+                    Process(pdf.FullName);
+            }
+
             return true;
         }
         catch (Exception ex)
