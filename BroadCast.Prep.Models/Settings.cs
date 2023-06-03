@@ -4,6 +4,10 @@ namespace BroadCast.Prep.Models;
 
 public record Settings
 {
+    public string FfMpegPath { get; set; } = default!;
+
+    public string RecordingSourceFolder { get; init; } = default!;
+
     public string PagesSourceFolder { get; init; } = default!;
 
     public string PagesDestinationFolder { get; init; } = default!;
@@ -21,6 +25,14 @@ public class SettingsValidator : AbstractValidator<Settings>
 {
     public SettingsValidator()
     {
+        RuleFor(x => x.FfMpegPath)
+            .NotEmpty()
+            .Must(x => new FileInfo(x).Exists);
+
+        RuleFor(x => x.RecordingSourceFolder)
+            .NotEmpty()
+            .Must(x => new DirectoryInfo(x).Exists);
+
         RuleFor(x => x.PagesSourceFolder)
             .NotEmpty()
             .Must(x => new DirectoryInfo(x).Exists);
