@@ -25,4 +25,16 @@ public class SermonData
 
     public async Task InsertAsync(Sermon sermon) =>
         await _collection.InsertOneAsync(sermon);
+
+    public IEnumerable<string> GetDistinctSpeakers() =>
+        GetAllAsync()
+            .GroupBy(s => s.Speaker!)
+            .OrderByDescending(g => g.Count())
+            .Select(x => x.Key);
+
+    public IEnumerable<string> GetRecentTitles(int count) =>
+        GetAllAsync()
+            .OrderByDescending(s => s.Date)
+            .Take(count)
+            .Select(s => s.Title!);
 }

@@ -10,6 +10,8 @@ public record Settings
 
     public string RecordingSourceFolder { get; init; } = default!;
 
+    public string PodcastArchiveFolder { get; init; } = default!;
+
     public string PagesSourceFolder { get; init; } = default!;
 
     public string PagesDestinationFolder { get; init; } = default!;
@@ -36,6 +38,10 @@ public class SettingsValidator : AbstractValidator<Settings>
             .Must(x => new FileInfo(x).Exists);
 
         RuleFor(x => x.RecordingSourceFolder)
+            .NotEmpty()
+            .Must(x => new DirectoryInfo(x).Exists);
+
+        RuleFor(x => x.PodcastArchiveFolder)
             .NotEmpty()
             .Must(x => new DirectoryInfo(x).Exists);
 

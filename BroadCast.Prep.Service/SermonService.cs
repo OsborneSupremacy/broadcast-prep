@@ -26,13 +26,9 @@ public static class SermonService
                 );
 
             var speaker = AnsiConsole.Prompt(
-                new TextPrompt<string>("Speaker:")
-                    .Validate(value =>
-                    {
-                        if (string.IsNullOrWhiteSpace(value))
-                            return ValidationResult.Error($"Speaker must not be empty.");
-                        return ValidationResult.Success();
-                    })
+                new SelectionPrompt<string>()
+                    .Title("Speaker")
+                    .AddChoices(data.GetDistinctSpeakers())
                 );
 
             var passage = AnsiConsole.Prompt(
