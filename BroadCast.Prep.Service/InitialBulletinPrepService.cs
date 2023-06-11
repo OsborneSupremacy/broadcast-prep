@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace BroadCast.Prep.Service;
 
-public static class InitialBulletinPrepService
+public static partial class InitialBulletinPrepService
 {
     public static Outcome<bool> Process(Settings settings)
     {
@@ -44,7 +44,7 @@ public static class InitialBulletinPrepService
 
     private static DateOnly? ExtractDate(string input)
     {
-        Match match = Regex.Match(input, @"\d{4}-\d{2}-\d{2}");
+        Match match = DateRegex().Match(input);
 
         if (match.Success && DateOnly.TryParse(match.Value, out DateOnly date))
         {
@@ -99,4 +99,7 @@ public static class InitialBulletinPrepService
         File.WriteAllText(settings.TitleAndDescriptionTxtPath, titleAndDescription);
         AnsiConsole.WriteLine($"Updated title and description files.");
     }
+
+    [GeneratedRegex("\\d{4}-\\d{2}-\\d{2}")]
+    private static partial Regex DateRegex();
 }
