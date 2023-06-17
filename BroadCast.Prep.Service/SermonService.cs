@@ -16,13 +16,9 @@ public static class SermonService
             AnsiConsole.WriteLine("Provide Sermon Information");
 
             var series = AnsiConsole.Prompt(
-                new TextPrompt<string>("Series:")
-                    .Validate(value =>
-                    {
-                        if (string.IsNullOrWhiteSpace(value))
-                            return ValidationResult.Error($"Series must not be empty.");
-                        return ValidationResult.Success();
-                    })
+                new SelectionPrompt<string>()
+                    .Title("Series")
+                    .AddChoices(data.GetDistinctSeries())
                 );
 
             var speaker = AnsiConsole.Prompt(
@@ -68,6 +64,7 @@ public static class SermonService
 
             var season = AnsiConsole.Prompt(
                 new TextPrompt<int>("Season:")
+                    .DefaultValue(data.GetSeasonBySeries(series))
                     .Validate(value =>
                     {
                         if (value == default)
@@ -78,6 +75,7 @@ public static class SermonService
 
             var episode = AnsiConsole.Prompt(
                 new TextPrompt<int>("Episode:")
+                    .DefaultValue(data.GetLastEpisodeBySeries(series) + 1)
                     .Validate(value =>
                     {
                         if (value == default)

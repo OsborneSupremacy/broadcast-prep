@@ -1,9 +1,7 @@
 ﻿using Broadcast.Prep.Data;
 using BroadCast.Prep.Models;
-using Microsoft.AspNetCore.Components.Web;
 using OsborneSupremacy.Extensions.AspNet;
 using Spectre.Console;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BroadCast.Prep.Service;
 
