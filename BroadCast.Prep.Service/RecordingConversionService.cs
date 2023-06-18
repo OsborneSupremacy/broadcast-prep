@@ -30,10 +30,7 @@ public class RecordingConversionService
                     .AddChoices(data.GetRecentTitles(5))
             );
 
-            var destinationPath = Path.Combine(
-                settings.PodcastArchiveFolder,
-                $"{GetSafeFileName(title)}.mp4"
-            );
+            var destinationPath = GetMp4FileName(settings.PodcastArchiveFolder, title);
 
             var result = new CliWrap.Command(settings.FfMpegPath)
                 .WithArguments($"-i \"{files[fileName].FullName}\" -vn -acodec copy \"{destinationPath}\"")
@@ -49,6 +46,12 @@ public class RecordingConversionService
             return new Outcome<bool>(ex);
         }
     }
+
+    public static string GetMp4FileName(string directory, string title) =>
+        Path.Combine(
+            directory,
+            $"{GetSafeFileName(title)}.mp4"
+        );
 
     private static string GetSafeFileName(string input) =>
         Path.GetInvalidFileNameChars()

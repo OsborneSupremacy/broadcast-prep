@@ -50,6 +50,7 @@ public class Program
             { "Prepare bulletin", InitialBulletinPrepService.Process },
             { "Convert PDFs to PNGs", PdfConversionService.Process },
             { "Add Sermon", SermonService.Process },
+            { "Export Sermon", SermonExportService.Process },
             { "Convert recording MKV to MP3", RecordingConversionService.Process },
             { "Exit", (Settings settings) =>
                 {
