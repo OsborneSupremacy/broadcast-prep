@@ -58,7 +58,6 @@ public class SettingsValidator : AbstractValidator<Settings>
             .Must(x => new FileInfo(x)?.Directory?.Exists ?? false);
 
         RuleFor(x => x.TitleAndDescriptionTxtPath).NotEmpty();
-        RuleFor(x => x.TitleAndDescriptionTemplate).NotEmpty();
 
         RuleForEach(x => x.PdfsToConvertToImages)
             .NotEmpty()

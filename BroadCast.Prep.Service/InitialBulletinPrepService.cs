@@ -88,17 +88,7 @@ public static partial class InitialBulletinPrepService
         if (File.Exists(settings.DateTxtPath))
             File.Delete(settings.DateTxtPath);
         File.WriteAllText(settings.DateTxtPath, sourceData.Date.ToLongDateString());
-
-        // write title and description file
-        if (File.Exists(settings.TitleAndDescriptionTxtPath))
-            File.Delete(settings.TitleAndDescriptionTxtPath);
-
-        var titleAndDescription = settings.TitleAndDescriptionTemplate
-            .Replace("{ServiceDate}", sourceData.Date.ToString("M/d/yyyy"));
-
-        File.WriteAllText(settings.TitleAndDescriptionTxtPath, titleAndDescription);
-        AnsiConsole.WriteLine($"Updated title and description files.");
-    }
+            }
 
     [GeneratedRegex("\\d{4}-\\d{2}-\\d{2}")]
     private static partial Regex DateRegex();

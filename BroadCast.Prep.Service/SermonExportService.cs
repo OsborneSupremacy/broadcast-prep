@@ -70,11 +70,11 @@ Post Title:
 
 Post Content:
 
-{FormatSermonContent(selectedSermon)}
+{selectedSermon.ToFormattedContent()}
 
 Port URL:
 
-{GetSermonUrl(selectedSermon)}
+{selectedSermon.ToUrl()}
 
 Audio Title:
 
@@ -114,6 +114,9 @@ Audio File:
 
             AnsiConsole.MarkupLine($"Sermon exported to {outputFile}");
 
+            WriteTitleAndDescriptionCopy(settings, selectedSermon);
+            AnsiConsole.WriteLine($"Updated title and description file.");
+
             return true;
         }
         catch (Exception ex)
@@ -122,11 +125,22 @@ Audio File:
         }
     }
 
-    private static string FormatSermonContent(Sermon sermon) =>
-        @$"{sermon.Title} {sermon.Passage}
+    private static void WriteTitleAndDescriptionCopy(Settings settings, Sermon sermon)
+    {
+        var output = @$"Service of Worship, {sermon.Date:MMMM dd, yyyy}
+
+Worship Service of Grace & Peace Church, Oconomowoc, Wisconsin.
+
+{sermon.Passage}. ""{sermon.Title}"".";
+
+        File.WriteAllText(settings.TitleAndDescriptionTxtPath, output);
+    }
+
+    private static string ToFormattedContent(this Sermon sermon) =>
+        @$"""{sermon.Title}"" {sermon.Passage}
 {sermon.Speaker}, {sermon.Date:MMMM dd, yyyy}";
 
-    private static string GetSermonUrl(Sermon sermon)
+    private static string ToUrl(this Sermon sermon)
     {
         return @$"{(sermon.Title ?? string.Empty)
             .ToLowerInvariant()
