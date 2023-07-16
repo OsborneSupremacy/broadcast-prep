@@ -145,7 +145,9 @@ Worship Service of Grace & Peace Church, Oconomowoc, Wisconsin.
         return @$"{(sermon.Title ?? string.Empty)
             .ToLowerInvariant()
             .Replace(" ", "-")
-            .Replace(":", "").RemoveSpecialUrlChars()}";
+            .Replace(":", "")
+            .Replace(" & ", " and ")
+            .RemoveSpecialUrlChars()}";
     }
 
     private static string RemoveSpecialUrlChars(this string uri) =>
