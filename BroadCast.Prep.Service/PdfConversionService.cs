@@ -15,25 +15,21 @@ public static class PdfConversionService
             foreach (var pdf in settings.PdfsToConvertToImages)
                 pdfs.Add(new FileInfo(pdf));
 
-            var table = new Table();
+            Table table = new();
             table.AddColumn("PDF");
             table.AddColumn("Last Modified");
 
             foreach (var pdf in pdfs)
-            {
                 table.AddRow(
                     pdf.Name,
                     pdf.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")
                 );
-            }
 
             AnsiConsole.Write(table);
 
             if (AnsiConsole.Confirm("Proceed with conversion?"))
-            {
                 foreach (var pdf in pdfs)
                     Process(pdf.FullName);
-            }
 
             return true;
         }
@@ -51,7 +47,7 @@ public static class PdfConversionService
 
         using var pageBitmap = new PDFiumBitmap(
             (int)firstPage.Width * 3,
-            (int)firstPage.Height * 3, 
+            (int)firstPage.Height * 3,
             true
         );
 
