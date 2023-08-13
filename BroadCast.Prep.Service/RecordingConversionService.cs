@@ -39,6 +39,8 @@ public class RecordingConversionService
                 .GetAwaiter()
                 .GetResult();
 
+            AnsiConsole.MarkupLine($"Recording converted to to {destinationPath}");
+
             return true;
 
         } catch (Exception ex)
