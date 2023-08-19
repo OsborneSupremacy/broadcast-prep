@@ -21,7 +21,7 @@ public static partial class InitialBulletinPrepService
     private static Outcome<SourceFileData> FindSourceDoc(Settings settings)
     {
         var files = new DirectoryInfo(settings.PagesSourceFolder)
-            .GetFiles()
+            .GetFiles("*.pages")
             .OrderByDescending(x => x.CreationTimeUtc)
             .ToDictionary(x => x.Name, x => new FileInfo(x.FullName));
 
