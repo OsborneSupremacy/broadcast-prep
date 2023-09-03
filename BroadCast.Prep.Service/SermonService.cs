@@ -15,11 +15,24 @@ public static class SermonService
 
             AnsiConsole.WriteLine("Provide Sermon Information");
 
-            var series = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("Series")
-                    .AddChoices(data.GetDistinctSeries())
-                );
+            var series = AnsiConsole.Confirm("Is this a new sermon series?", false) switch {
+
+                true => AnsiConsole.Prompt(
+                    new TextPrompt<string>("Series Name:")
+                        .Validate(value =>
+                        {
+                            if (string.IsNullOrWhiteSpace(value))
+                                return ValidationResult.Error($"Series Name must not be empty.");
+                            return ValidationResult.Success();
+                        })
+                    ),
+
+                false => AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("Series")
+                        .AddChoices(data.GetDistinctSeries())
+                    )
+            };
 
             var speaker = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
