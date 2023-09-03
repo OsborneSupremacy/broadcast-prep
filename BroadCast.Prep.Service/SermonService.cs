@@ -15,97 +15,17 @@ public static class SermonService
 
             AnsiConsole.WriteLine("Provide Sermon Information");
 
-            var series = AnsiConsole.Confirm("Is this a new sermon series?", false) switch {
-
-                true => AnsiConsole.Prompt(
-                    new TextPrompt<string>("Series Name:")
-                        .Validate(value =>
-                        {
-                            if (string.IsNullOrWhiteSpace(value))
-                                return ValidationResult.Error($"Series Name must not be empty.");
-                            return ValidationResult.Success();
-                        })
-                    ),
-
-                false => AnsiConsole.Prompt(
-                    new SelectionPrompt<string>()
-                        .Title("Series")
-                        .AddChoices(data.GetDistinctSeries())
-                    )
-            };
-
-            var speaker = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("Speaker")
-                    .AddChoices(data.GetDistinctSpeakers())
-                );
-
-            var passage = AnsiConsole.Prompt(
-                new TextPrompt<string>("Passage:")
-                    .Validate(value =>
-                    {
-                        if (string.IsNullOrWhiteSpace(value))
-                            return ValidationResult.Error($"Passage must not be empty.");
-                        return ValidationResult.Success();
-                    })
-                );
-
-            var title = AnsiConsole.Prompt(
-                new TextPrompt<string>("Title:")
-                    .Validate(value =>
-                    {
-                        if (string.IsNullOrWhiteSpace(value))
-                            return ValidationResult.Error($"Title must not be empty.");
-                        return ValidationResult.Success();
-                    })
-                );
-
-            var defaultDate = DateOnly.FromDateTime(DateTime.Now);
-            while(defaultDate.DayOfWeek != DayOfWeek.Sunday)
-                defaultDate = defaultDate.AddDays(1);
-
-            var date = AnsiConsole.Prompt(
-                new TextPrompt<DateOnly>("Date")
-                    .DefaultValue(defaultDate)
-                    .Validate(value =>
-                    {
-                        if (value == default)
-                            return ValidationResult.Error($"Date must not be empty.");
-                        return ValidationResult.Success();
-                    })
-                );
-
-            var season = AnsiConsole.Prompt(
-                new TextPrompt<int>("Season:")
-                    .DefaultValue(data.GetSeasonBySeries(series))
-                    .Validate(value =>
-                    {
-                        if (value == default)
-                            return ValidationResult.Error($"Season must be a valid integer.");
-                        return ValidationResult.Success();
-                    })
-                );
-
-            var episode = AnsiConsole.Prompt(
-                new TextPrompt<int>("Episode:")
-                    .DefaultValue(data.GetLastEpisodeBySeries(series) + 1)
-                    .Validate(value =>
-                    {
-                        if (value == default)
-                            return ValidationResult.Error($"Episode must be a valid integer.");
-                        return ValidationResult.Success();
-                    })
-                );
+            var series = PromptForListItemOrNew(data.GetDistinctSeries(), "Series");
 
             var sermon = new Sermon
             {
                 Series = series,
-                Speaker = speaker,
-                Passage = passage,
-                Title = title,
-                Date = date,
-                Season = season,
-                Episode = episode
+                Speaker = PromptForListItemOrNew(data.GetDistinctSpeakers(), "Speaker"),
+                Passage = PromptForText("Passage"),
+                Title = PromptForText("Title"),
+                Date = PromptForDateOnly("Date", GetDefaultDate()),
+                Season = PromptForInt("Season", data.GetSeasonBySeries(series)),
+                Episode = PromptForInt("Episode", data.GetLastEpisodeBySeries(series) + 1)
             };
 
             data.InsertAsync(sermon).GetAwaiter().GetResult();
@@ -116,5 +36,76 @@ public static class SermonService
         {
             return new Outcome<bool>(ex);
         };
+    }
+
+    private static DateOnly GetDefaultDate()
+    {
+        var defaultDate = DateOnly.FromDateTime(DateTime.Now);
+        while(defaultDate.DayOfWeek != DayOfWeek.Sunday)
+            defaultDate = defaultDate.AddDays(1);
+
+        return defaultDate;
+    }
+
+    private static DateOnly PromptForDateOnly(string prompt, DateOnly defaultValue) =>
+        AnsiConsole.Prompt(
+            new TextPrompt<DateOnly>($"{prompt}:")
+                .DefaultValue(defaultValue)
+                .Validate(value =>
+                {
+                    return value == default
+                        ? ValidationResult.Error($"{prompt} must be a valid date.")
+                        : ValidationResult.Success();
+                })
+            );
+
+    private static int PromptForInt(string prompt, int defaultValue) =>
+        AnsiConsole.Prompt(
+            new TextPrompt<int>($"{prompt}:")
+                .DefaultValue(defaultValue)
+                .Validate(value =>
+                {
+                    return value == default
+                        ? ValidationResult.Error($"{prompt} must be a valid integer.")
+                        : ValidationResult.Success();
+                })
+            );
+
+    private static string PromptForText(string prompt) =>
+        AnsiConsole.Prompt(
+            new TextPrompt<string>($"{prompt}:")
+                .Validate(value =>
+                {
+                    return string.IsNullOrWhiteSpace(value)
+                        ? ValidationResult.Error($"{prompt} must not be empty.")
+                        : ValidationResult.Success();
+                })
+            );
+
+    private static string PromptForListItemOrNew(
+        IEnumerable<string> items,
+        string itemType
+        )
+    {
+        var _new = "New";
+
+        var selection = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title($"{itemType}:")
+                .AddChoices(_new)
+                .AddChoices(items)
+            );
+
+        return selection != _new
+            ? selection
+            : AnsiConsole.Prompt(
+                new TextPrompt<string>($"New {itemType}:")
+                    .Validate(value =>
+                    {
+                        return string.IsNullOrWhiteSpace(value)
+                            ? ValidationResult.Error($"{itemType} must not be empty.")
+                            : ValidationResult.Success();
+                    })
+                );
     }
 }
