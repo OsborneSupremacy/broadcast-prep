@@ -68,6 +68,6 @@ public class SermonData
 
         if (episode != 0) return episode;
 
-        return 1;
+        return 0;
     }
 }
