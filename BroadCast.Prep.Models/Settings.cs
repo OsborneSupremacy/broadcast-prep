@@ -6,8 +6,6 @@ public record Settings
 {
     public string DataStorePath { get; set; } = default!;
 
-    public string FfMpegPath { get; set; } = default!;
-
     public string RecordingSourceFolder { get; init; } = default!;
 
     public string PodcastArchiveFolder { get; init; } = default!;
@@ -30,10 +28,6 @@ public class SettingsValidator : AbstractValidator<Settings>
     public SettingsValidator()
     {
         RuleFor(x => x.DataStorePath)
-            .NotEmpty()
-            .Must(x => new FileInfo(x).Exists);
-
-        RuleFor(x => x.FfMpegPath)
             .NotEmpty()
             .Must(x => new FileInfo(x).Exists);
 
