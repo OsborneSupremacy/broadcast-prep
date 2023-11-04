@@ -5,14 +5,12 @@ namespace Broadcast.Prep.Data;
 
 public class SermonData
 {
-    private readonly DataStore _store;
-
     private readonly IDocumentCollection<Sermon> _collection;
 
     public SermonData(string path)
     {
-        _store = new DataStore(path);
-        _collection =  _store.GetCollection<Sermon>();
+        var store = new DataStore(path);
+        _collection =  store.GetCollection<Sermon>();
     }
 
     public IEnumerable<Sermon> GetAllAsync() =>
@@ -48,8 +46,7 @@ public class SermonData
     {
         var season = GetAllAsync()
             .Where(s => s.Series == series)
-            .OrderByDescending(s => s.Date)
-            .FirstOrDefault()?
+            .MaxBy(s => s.Date)?
             .Season ?? 0;
 
         if (season != 0) return season;
@@ -62,8 +59,7 @@ public class SermonData
     {
         var episode = GetAllAsync()
             .Where(s => s.Series == series)
-            .OrderByDescending(s => s.Date)
-            .FirstOrDefault()?
+            .MaxBy(s => s.Date)?
             .Episode ?? 0;
 
         if (episode != 0) return episode;

@@ -1,15 +1,9 @@
 ﻿namespace BroadCast.Prep.Models;
 
-public record SourceFileData
+public record SourceFileData(FileInfo File, DateOnly Date)
 {
-    public SourceFileData(FileInfo file, DateOnly date)
-    {
-        File = file ?? throw new ArgumentNullException(nameof(file));
-        Date = date;
-    }
+    public FileInfo File { get; set; } = File ?? throw new ArgumentNullException(nameof(File));
 
-    public FileInfo File { get; set; }
-
-    public DateOnly Date { get; set; }
+    public DateOnly Date { get; set; } = Date;
 }
 

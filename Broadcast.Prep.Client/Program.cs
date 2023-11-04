@@ -10,7 +10,7 @@ public class Program
 {
     public static void Main()
     {
-        IConfigurationRoot? configuration = new ConfigurationBuilder()
+        var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
 
@@ -52,7 +52,7 @@ public class Program
             { "Add Sermon", SermonService.Process },
             { "Export Sermon", SermonExportService.Process },
             { "Convert recording MKV to MP3", RecordingConversionService.Process },
-            { "Exit", (Settings settings) =>
+            { "Exit", _ =>
                 {
                     Environment.Exit(0);
                     return new Outcome<bool>(true);
@@ -60,7 +60,7 @@ public class Program
             },
         };
 
-        string opKey = AnsiConsole.Prompt(
+        var opKey = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("Select operation")
                 .AddChoices(operations.Keys)

@@ -33,7 +33,7 @@ public static partial class InitialBulletinPrepService
 
         AnsiConsole.WriteLine($"You selected {fileName}.");
 
-        DateOnly serviceDate =
+        var serviceDate =
             ExtractDate(fileName)
             ?? GetDateFromUser();
 
@@ -44,19 +44,25 @@ public static partial class InitialBulletinPrepService
 
     private static DateOnly? ExtractDate(string input)
     {
-        Match match = DateRegex().Match(input);
+        var match = DateRegex().Match(input);
 
-        if (match.Success && DateOnly.TryParse(match.Value, out DateOnly date))
-        {
-            AnsiConsole.WriteLine($"Service date extracted from file name: {date}");
-            return date;
-        }
+        if (!match.Success || !DateOnly.TryParse(match.Value, out var date))
+            return null;
+        
+        AnsiConsole.WriteLine($"Service date extracted from file name: {date}");
+        return date;
 
-        return null;
     }
 
     private static DateOnly GetDateFromUser()
     {
+        DateOnly? date = null;
+
+        while (date is null)
+            date = TryGetDate();
+
+        return date.Value;
+
         static DateOnly? TryGetDate()
         {
             var isValid = DateOnly.TryParse(
@@ -68,13 +74,6 @@ public static partial class InitialBulletinPrepService
 
             return isValid ? date : null;
         }
-
-        DateOnly? date = null;
-
-        while (date is null)
-            date = TryGetDate();
-
-        return date.Value;
     }
 
     private static void CopyToTargetAndCreateTxtFiles(Settings settings, SourceFileData sourceData)
@@ -86,9 +85,10 @@ public static partial class InitialBulletinPrepService
 
         // write date to date txt file
         if (File.Exists(settings.DateTxtPath))
-            File.Delete(settings.DateTxtPath);
+            File.Delete(settings.DateTxtPath); 
+        
         File.WriteAllText(settings.DateTxtPath, sourceData.Date.ToLongDateString());
-            }
+    }
 
     [GeneratedRegex("\\d{4}-\\d{2}-\\d{2}")]
     private static partial Regex DateRegex();

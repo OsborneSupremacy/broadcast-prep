@@ -11,9 +11,10 @@ public static class PdfConversionService
     {
         try
         {
-            List<FileInfo> pdfs = new();
-            foreach (var pdf in settings.PdfsToConvertToImages)
-                pdfs.Add(new FileInfo(pdf));
+            var pdfs = settings
+                .PdfsToConvertToImages
+                .Select(pdf => new FileInfo(pdf))
+                .ToList();
 
             Table table = new();
             table.AddColumn("PDF");
@@ -36,10 +37,10 @@ public static class PdfConversionService
         catch (Exception ex)
         {
             return new Outcome<bool>(ex);
-        };
+        }
     }
 
-    public static void Process(string pdfFilePath)
+    private static void Process(string pdfFilePath)
     {
         using var pdfDocument = new PdfDocument(pdfFilePath);
 

@@ -35,7 +35,7 @@ public static class SermonService
         catch (Exception ex)
         {
             return new Outcome<bool>(ex);
-        };
+        }
     }
 
     private static DateOnly GetDefaultDate()
@@ -51,61 +51,49 @@ public static class SermonService
         AnsiConsole.Prompt(
             new TextPrompt<DateOnly>($"{prompt}:")
                 .DefaultValue(defaultValue)
-                .Validate(value =>
-                {
-                    return value == default
-                        ? ValidationResult.Error($"{prompt} must be a valid date.")
-                        : ValidationResult.Success();
-                })
+                .Validate(value => value == default
+                    ? ValidationResult.Error($"{prompt} must be a valid date.")
+                    : ValidationResult.Success())
             );
 
     private static int PromptForInt(string prompt, int defaultValue) =>
         AnsiConsole.Prompt(
             new TextPrompt<int>($"{prompt}:")
                 .DefaultValue(defaultValue)
-                .Validate(value =>
-                {
-                    return value == default
-                        ? ValidationResult.Error($"{prompt} must be a valid integer.")
-                        : ValidationResult.Success();
-                })
+                .Validate(value => value == default
+                    ? ValidationResult.Error($"{prompt} must be a valid integer.")
+                    : ValidationResult.Success())
             );
 
     private static string PromptForText(string prompt) =>
         AnsiConsole.Prompt(
             new TextPrompt<string>($"{prompt}:")
-                .Validate(value =>
-                {
-                    return string.IsNullOrWhiteSpace(value)
-                        ? ValidationResult.Error($"{prompt} must not be empty.")
-                        : ValidationResult.Success();
-                })
-            );
-
+                .Validate(value => string.IsNullOrWhiteSpace(value)
+                    ? ValidationResult.Error($"{prompt} must not be empty.")
+                    : ValidationResult.Success())
+        );
+    
     private static string PromptForListItemOrNew(
         IEnumerable<string> items,
         string itemType
         )
     {
-        var _new = "New";
+        const string newKeyword = "New";
 
         var selection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title($"{itemType}:")
-                .AddChoices(_new)
+                .AddChoices(newKeyword)
                 .AddChoices(items)
             );
 
-        return selection != _new
+        return selection != newKeyword
             ? selection
             : AnsiConsole.Prompt(
                 new TextPrompt<string>($"New {itemType}:")
-                    .Validate(value =>
-                    {
-                        return string.IsNullOrWhiteSpace(value)
-                            ? ValidationResult.Error($"{itemType} must not be empty.")
-                            : ValidationResult.Success();
-                    })
+                    .Validate(value => string.IsNullOrWhiteSpace(value)
+                        ? ValidationResult.Error($"{itemType} must not be empty.")
+                        : ValidationResult.Success())
                 );
     }
 }

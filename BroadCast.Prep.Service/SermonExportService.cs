@@ -40,72 +40,71 @@ public static class SermonExportService
             var sermonId = AnsiConsole.Prompt(
                 new TextPrompt<int>("Specify Sermon ID")
                     .DefaultValue(sermons.Max(x => x.Key))
-                    .Validate(value =>
-                    {
-                        if (!sermons.ContainsKey(value))
-                        return ValidationResult.Error($"Sermon ID {value} does not exist.");
-                        return ValidationResult.Success();
-                    })
+                    .Validate(value => !sermons.ContainsKey(value)
+                        ? ValidationResult.Error($"Sermon ID {value} does not exist.")
+                        : ValidationResult.Success())
                 );
 
             var selectedSermon = sermons[sermonId];
 
-            var template = @$"
+            var template = $"""
 
-Title:
 
-{selectedSermon.Title}
+                            Title:
 
-Speaker:
+                            {selectedSermon.Title}
 
-{selectedSermon.Speaker}
+                            Speaker:
 
-Series:
+                            {selectedSermon.Speaker}
 
-{selectedSermon.Series}
+                            Series:
 
-Post Title:
+                            {selectedSermon.Series}
 
-{selectedSermon.Title}, {selectedSermon.Passage}
+                            Post Title:
 
-Post Content:
+                            {selectedSermon.Title}, {selectedSermon.Passage}
 
-{selectedSermon.ToFormattedContent()}
+                            Post Content:
 
-Port URL:
+                            {selectedSermon.ToFormattedContent()}
 
-{selectedSermon.ToUrl()}
+                            Port URL:
 
-Audio Title:
+                            {selectedSermon.ToUrl()}
 
-{selectedSermon.Title}, {selectedSermon.Passage}
+                            Audio Title:
 
-Audio Artist:
+                            {selectedSermon.Title}, {selectedSermon.Passage}
 
-{selectedSermon.Speaker}
+                            Audio Artist:
 
-Podcast Title:
+                            {selectedSermon.Speaker}
 
-{selectedSermon.Title}
+                            Podcast Title:
 
-Podcast Subtitle:
+                            {selectedSermon.Title}
 
-{selectedSermon.Passage}
+                            Podcast Subtitle:
 
-Podcast Season
+                            {selectedSermon.Passage}
 
-{selectedSermon.Season}
+                            Podcast Season
 
-Podcast Episode:
+                            {selectedSermon.Season}
 
-{selectedSermon.Episode}
+                            Podcast Episode:
 
-Audio File:
+                            {selectedSermon.Episode}
 
-{RecordingConversionService
-    .GetMp4FileName(settings.PodcastArchiveFolder, selectedSermon.Title ?? "untitled")}
+                            Audio File:
 
-";
+                            {RecordingConversionService
+                                .GetMp4FileName(settings.PodcastArchiveFolder, selectedSermon.Title ?? "untitled")}
+
+
+                            """;
 
             var outputFile = Path.Combine(settings.PodcastArchiveFolder, $"sermon-{selectedSermon.Id}.txt");
             if (File.Exists(outputFile))
@@ -137,8 +136,10 @@ Worship Service of Grace & Peace Church, Oconomowoc, Wisconsin.
     }
 
     private static string ToFormattedContent(this Sermon sermon) =>
-        @$"""{sermon.Title}"" {sermon.Passage}
-{sermon.Speaker}, {sermon.Date:MMMM dd, yyyy}";
+        $"""
+         "{sermon.Title}" {sermon.Passage}
+         {sermon.Speaker}, {sermon.Date:MMMM dd, yyyy}
+         """;
 
     private static string ToUrl(this Sermon sermon)
     {

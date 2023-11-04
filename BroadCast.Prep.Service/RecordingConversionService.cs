@@ -32,7 +32,7 @@ public class RecordingConversionService
 
             var destinationPath = GetMp4FileName(settings.PodcastArchiveFolder, title);
 
-            var result = new CliWrap.Command("ffmpeg")
+            _ = new CliWrap.Command("ffmpeg")
                 .WithArguments($"-i \"{files[fileName].FullName}\" -vn -acodec copy \"{destinationPath}\"")
                 .WithValidation(CliWrap.CommandResultValidation.ZeroExitCode)
                 .ExecuteAsync()

@@ -2,19 +2,19 @@
 
 public record Sermon
 {
-    public int Id { get; set; }
+    public int Id { get; init; }
 
-    public string? Series { get; set; }
+    public required string Series { get; init; }
 
-    public string? Speaker { get; set; }
+    public required string Speaker { get; init; }
 
-    public string? Passage { get; set; }
+    public required string Passage { get; init; }
 
-    public string? Title { get; set; }
+    public required string Title { get; init; }
 
-    public DateOnly Date { get; set; }
+    public required DateOnly Date { get; init; }
 
-    public int Season { get; set; }
+    public required int Season { get; init; }
 
-    public int Episode { get; set; }
+    public required int Episode { get; init; }
 }

@@ -18,8 +18,6 @@ public record Settings
 
     public string TitleAndDescriptionTxtPath { get; init; } = default!;
 
-    public string TitleAndDescriptionTemplate { get; init; } = default!;
-
     public List<string> PdfsToConvertToImages { get; init; } = default!;
 }
 
