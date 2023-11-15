@@ -1,9 +1,4 @@
-﻿using Broadcast.Prep.Data;
-using BroadCast.Prep.Models;
-using OsborneSupremacy.Extensions.AspNet;
-using Spectre.Console;
-
-namespace BroadCast.Prep.Service;
+﻿namespace BroadCast.Prep.Service;
 
 public static class SermonExportService
 {
@@ -30,8 +25,8 @@ public static class SermonExportService
                 table.AddRow(
                     sermon.Id.ToString(),
                     sermon.Date.ToString("yyyy-MM-dd"),
-                    sermon.Title ?? "Missing Title",
-                    sermon.Speaker ?? "Missing Speaker"
+                    sermon.Title,
+                    sermon.Speaker
                 );
             }
 
@@ -141,15 +136,13 @@ Worship Service of Grace & Peace Church, Oconomowoc, Wisconsin.
          {sermon.Speaker}, {sermon.Date:MMMM dd, yyyy}
          """;
 
-    private static string ToUrl(this Sermon sermon)
-    {
-        return @$"{(sermon.Title ?? string.Empty)
+    private static string ToUrl(this Sermon sermon) =>
+        @$"{(sermon.Title ?? string.Empty)
             .ToLowerInvariant()
             .Replace(" ", "-")
             .Replace(":", "")
             .Replace(" & ", " and ")
             .RemoveSpecialUrlChars()}";
-    }
 
     private static string RemoveSpecialUrlChars(this string uri) =>
         uri

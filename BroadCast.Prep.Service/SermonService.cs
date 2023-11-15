@@ -1,9 +1,4 @@
-﻿using Broadcast.Prep.Data;
-using BroadCast.Prep.Models;
-using OsborneSupremacy.Extensions.AspNet;
-using Spectre.Console;
-
-namespace BroadCast.Prep.Service;
+﻿namespace BroadCast.Prep.Service;
 
 public static class SermonService
 {

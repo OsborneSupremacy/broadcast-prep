@@ -6,7 +6,7 @@ using Spectre.Console;
 
 namespace BroadCast.Prep.Client;
 
-public class Program 
+public static class Program 
 {
     public static void Main()
     {
@@ -68,7 +68,7 @@ public class Program
         return operations[opKey];
     }
 
-    delegate Outcome<bool> OperationDelegate(Settings settings);
+    private delegate Outcome<bool> OperationDelegate(Settings settings);
 
     private readonly struct ProcessingResult
     {

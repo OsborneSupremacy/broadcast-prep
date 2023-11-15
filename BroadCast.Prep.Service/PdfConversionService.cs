@@ -1,7 +1,5 @@
-﻿using BroadCast.Prep.Models;
-using OsborneSupremacy.Extensions.AspNet;
+﻿using System.Runtime.InteropServices;
 using PDFiumSharp;
-using Spectre.Console;
 
 namespace BroadCast.Prep.Service;
 
@@ -42,6 +40,9 @@ public static class PdfConversionService
 
     private static void Process(string pdfFilePath)
     {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            throw new NotSupportedException("PDFiumSharp only supports Windows.");
+        
         using var pdfDocument = new PdfDocument(pdfFilePath);
 
         var firstPage = pdfDocument.Pages.First();
