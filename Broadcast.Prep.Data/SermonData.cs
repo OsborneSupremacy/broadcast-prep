@@ -26,13 +26,13 @@ public class SermonData
 
     public IEnumerable<string> GetDistinctSpeakers() =>
         GetAllAsync()
-            .GroupBy(s => s.Speaker!)
+            .GroupBy(s => s.Speaker)
             .OrderByDescending(g => g.Count())
             .Select(x => x.Key);
 
     public IEnumerable<string> GetDistinctSeries() =>
         GetAllAsync()
-            .GroupBy(s => s.Series!)
+            .GroupBy(s => s.Series)
             .OrderByDescending(g => g.Max(s => s.Date))
             .Select(x => x.Key);
 
@@ -40,7 +40,7 @@ public class SermonData
         GetAllAsync()
             .OrderByDescending(s => s.Date)
             .Take(count)
-            .Select(s => s.Title!);
+            .Select(s => s.Title);
 
     public int GetSeasonBySeries(string series)
     {
@@ -62,8 +62,6 @@ public class SermonData
             .MaxBy(s => s.Date)?
             .Episode ?? 0;
 
-        if (episode != 0) return episode;
-
-        return 0;
+        return episode != 0 ? episode : 0;
     }
 }

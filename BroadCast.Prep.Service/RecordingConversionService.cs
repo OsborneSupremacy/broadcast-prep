@@ -1,6 +1,6 @@
 ﻿namespace BroadCast.Prep.Service;
 
-public class RecordingConversionService
+public static class RecordingConversionService
 {
     public static Outcome<bool> Process(Settings settings)
     {

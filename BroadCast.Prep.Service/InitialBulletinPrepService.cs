@@ -51,27 +51,9 @@ public static partial class InitialBulletinPrepService
 
     }
 
-    private static DateOnly GetDateFromUser()
-    {
-        DateOnly? date = null;
-
-        while (date is null)
-            date = TryGetDate();
-
-        return date.Value;
-
-        static DateOnly? TryGetDate()
-        {
-            var isValid = DateOnly.TryParse(
-                AnsiConsole.Prompt(new TextPrompt<string>("Enter a date (yyyy-MM-dd): ")),
-                out var date);
-
-            if (!isValid)
-                AnsiConsole.MarkupLine($"[red]Invalid date format[/]. Please enter a date in the format [yellow]yyyy-MM-dd[/].");
-
-            return isValid ? date : null;
-        }
-    }
+    private static DateOnly GetDateFromUser() =>
+        AnsiConsole.Prompt(
+            new TextPrompt<DateOnly>("Enter a date:"));
 
     private static void CopyToTargetAndCreateTxtFiles(Settings settings, SourceFileData sourceData)
     {
@@ -87,6 +69,6 @@ public static partial class InitialBulletinPrepService
         File.WriteAllText(settings.DateTxtPath, sourceData.Date.ToLongDateString());
     }
 
-    [GeneratedRegex("\\d{4}-\\d{2}-\\d{2}")]
+    [GeneratedRegex(@"\d{4}-\d{2}-\d{2}")]
     private static partial Regex DateRegex();
 }
