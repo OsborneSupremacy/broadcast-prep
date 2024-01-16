@@ -48,7 +48,6 @@ public static class Program
     {
         Dictionary<string, OperationDelegate> operations = new() {
             { "Prepare bulletin", InitialBulletinPrepService.Process },
-            { "Convert PDFs to PNGs", PdfConversionService.Process },
             { "Add Sermon", SermonService.Process },
             { "Export Sermon", SermonExportService.Process },
             { "Convert recording MKV to MP3", RecordingConversionService.Process },
