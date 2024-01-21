@@ -17,8 +17,6 @@ public record Settings
     public string DateTxtPath { get; init; } = default!;
 
     public string TitleAndDescriptionTxtPath { get; init; } = default!;
-
-    public List<string> PdfsToConvertToImages { get; init; } = default!;
 }
 
 public class SettingsValidator : AbstractValidator<Settings>
@@ -50,9 +48,5 @@ public class SettingsValidator : AbstractValidator<Settings>
             .Must(x => new FileInfo(x)?.Directory?.Exists ?? false);
 
         RuleFor(x => x.TitleAndDescriptionTxtPath).NotEmpty();
-
-        RuleForEach(x => x.PdfsToConvertToImages)
-            .NotEmpty()
-            .Must(x => new FileInfo(x)?.Directory?.Exists ?? false);
     }
 }
