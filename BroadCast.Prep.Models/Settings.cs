@@ -13,6 +13,8 @@ public record Settings
     public string PagesSourceFolder { get; init; } = default!;
 
     public string PagesDestinationFolder { get; init; } = default!;
+    
+    public List<PagesPng> PagesToConvertToPng { get; init;} = new();
 
     public string DateTxtPath { get; init; } = default!;
 
@@ -43,9 +45,12 @@ public class SettingsValidator : AbstractValidator<Settings>
             .NotEmpty()
             .Must(x => new DirectoryInfo(x).Exists);
 
+        RuleForEach(x => x.PagesToConvertToPng)
+            .SetValidator(new PagesPngValidator());
+        
         RuleFor(x => x.DateTxtPath)
             .NotEmpty()
-            .Must(x => new FileInfo(x)?.Directory?.Exists ?? false);
+            .Must(x => new FileInfo(x).Directory?.Exists ?? false);
 
         RuleFor(x => x.TitleAndDescriptionTxtPath).NotEmpty();
     }

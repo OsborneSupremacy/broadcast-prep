@@ -40,7 +40,7 @@ public static class Program
 
         return new()
         {
-            Continue = AnsiConsole.Confirm("Is there anything else you want to do?")
+            Continue = true
         };
     }
 
@@ -48,6 +48,7 @@ public static class Program
     {
         Dictionary<string, OperationDelegate> operations = new() {
             { "Prepare bulletin", InitialBulletinPrepService.Process },
+            { "Convert Pages to PNG", PagesToPngService.Process },
             { "Add Sermon", SermonService.Process },
             { "Export Sermon", SermonExportService.Process },
             { "Convert recording MKV to MP3", RecordingConversionService.Process },
