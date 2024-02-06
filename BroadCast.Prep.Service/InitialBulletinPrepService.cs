@@ -67,6 +67,21 @@ public static partial class InitialBulletinPrepService
             File.Delete(settings.DateTxtPath); 
         
         File.WriteAllText(settings.DateTxtPath, sourceData.Date.ToLongDateString());
+
+        var makeCopies = false;
+        AnsiConsole.WriteLine("Once you've made the desired edits to Current.pages, press Y to make copies of the file.");
+        while(!makeCopies)
+            makeCopies = AnsiConsole.Confirm("Ready?");
+        
+        var pages = settings.PagesToConvertToPng.Select(p => p.PageName).ToList();
+
+        foreach (var page in pages)
+        {
+            var destination = Path.Combine(settings.PagesDestinationFolder, $"{page}.pages");
+            File.Copy(targetFile, destination, true);
+        }
+        
+        AnsiConsole.WriteLine("Current.pages has been copied.");
     }
 
     [GeneratedRegex(@"\d{4}-\d{2}-\d{2}")]
