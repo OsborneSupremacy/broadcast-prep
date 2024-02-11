@@ -45,7 +45,7 @@ public static class PagesToPngService
         while (pdfsVerified < pagesPngs.Count)
         {
             var pdfsReady = AnsiConsole.Confirm(
-                "You need to manually run the AppleScript to convert the Pages document to PDF now. Enter Y when finished.");
+                "You need to manually run the AppleScript to convert the Pages document to PDF now (/Scripts/pages-to-pdf.app). I'm so sorry.. Enter Y when finished.");
             
             if (!pdfsReady)
                 continue;

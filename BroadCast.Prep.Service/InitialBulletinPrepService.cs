@@ -73,13 +73,12 @@ public static partial class InitialBulletinPrepService
         while(!makeCopies)
             makeCopies = AnsiConsole.Confirm("Ready?");
         
-        var pages = settings.PagesToConvertToPng.Select(p => p.PageName).ToList();
+        var pageDestinations = settings
+            .PagesToConvertToPng
+            .Select(p => Path.Combine(settings.PagesDestinationFolder, $"{p.PageName}.pages"));
 
-        foreach (var page in pages)
-        {
-            var destination = Path.Combine(settings.PagesDestinationFolder, $"{page}.pages");
+        foreach (var destination in pageDestinations)
             File.Copy(targetFile, destination, true);
-        }
         
         AnsiConsole.WriteLine("Current.pages has been copied.");
     }
