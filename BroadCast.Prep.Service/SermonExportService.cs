@@ -41,9 +41,20 @@ public static class SermonExportService
                 );
 
             var selectedSermon = sermons[sermonId];
+            
+            var streamingInfo = $"""
+                                 Service of Worship, {selectedSermon.Date:MMMM dd, yyyy}
+
+                                 Worship Service of Grace & Peace Church, Oconomowoc, Wisconsin.
+
+                                 {selectedSermon.Passage}. "{selectedSermon.Title}".
+                                 """;            
 
             var template = $"""
-
+                            
+                            Streaming Info:
+                            
+                            {streamingInfo}
 
                             Title:
 
@@ -108,9 +119,6 @@ public static class SermonExportService
 
             AnsiConsole.MarkupLine($"Sermon exported to {outputFile}");
 
-            WriteTitleAndDescriptionCopy(settings, selectedSermon);
-            AnsiConsole.WriteLine($"Updated title and description file.");
-
             return true;
         }
         catch (Exception ex)
@@ -118,18 +126,7 @@ public static class SermonExportService
             return new Outcome<bool>(ex);
         }
     }
-
-    private static void WriteTitleAndDescriptionCopy(Settings settings, Sermon sermon)
-    {
-        var output = @$"Service of Worship, {sermon.Date:MMMM dd, yyyy}
-
-Worship Service of Grace & Peace Church, Oconomowoc, Wisconsin.
-
-{sermon.Passage}. ""{sermon.Title}"".";
-
-        File.WriteAllText(settings.TitleAndDescriptionTxtPath, output);
-    }
-
+    
     private static string ToFormattedContent(this Sermon sermon) =>
         $"""
          "{sermon.Title}" {sermon.Passage}
