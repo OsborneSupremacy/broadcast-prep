@@ -45,7 +45,7 @@ public static partial class InitialBulletinPrepService
 
         if (!match.Success || !DateOnly.TryParse(match.Value, out var date))
             return null;
-        
+
         AnsiConsole.WriteLine($"Service date extracted from file name: {date}");
         return date;
 
@@ -64,23 +64,9 @@ public static partial class InitialBulletinPrepService
 
         // write date to date txt file
         if (File.Exists(settings.DateTxtPath))
-            File.Delete(settings.DateTxtPath); 
-        
+            File.Delete(settings.DateTxtPath);
+
         File.WriteAllText(settings.DateTxtPath, sourceData.Date.ToLongDateString());
-
-        var makeCopies = false;
-        AnsiConsole.WriteLine("Once you've made the desired edits to Current.pages, press Y to make copies of the file.");
-        while(!makeCopies)
-            makeCopies = AnsiConsole.Confirm("Ready?");
-        
-        var pageDestinations = settings
-            .PagesToConvertToPng
-            .Select(p => Path.Combine(settings.PagesDestinationFolder, $"{p.PageName}.pages"));
-
-        foreach (var destination in pageDestinations)
-            File.Copy(targetFile, destination, true);
-        
-        AnsiConsole.WriteLine("Current.pages has been copied.");
     }
 
     [GeneratedRegex(@"\d{4}-\d{2}-\d{2}")]

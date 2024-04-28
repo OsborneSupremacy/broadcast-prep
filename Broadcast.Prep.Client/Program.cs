@@ -6,8 +6,29 @@ using Spectre.Console;
 
 namespace BroadCast.Prep.Client;
 
-public static class Program 
+public static class Program
 {
+    private static readonly Dictionary<string, Func<Settings, ProcessingResult>> ProcessingModes = new()
+    {
+        { "Execute entire process", ExecuteEntireProcess },
+        { "Process individual step", ProcessIndividualStep },
+    };
+
+    private static readonly Dictionary<string, OperationDelegate> Operations = new() {
+        { "Prepare bulletin", InitialBulletinPrepService.Process },
+        { "Make Copies of Current.pages", BulletinCopyService.Process },
+        { "Convert Pages to PNG", PagesToPngService.Process },
+        { "Add Sermon", SermonService.Process },
+        { "Export Sermon", SermonExportService.Process },
+        { "Convert recording MKV to MP3", RecordingConversionService.Process },
+        { "Exit", _ =>
+            {
+                Environment.Exit(0);
+                return new Outcome<bool>(true);
+            }
+        },
+    };
+
     public static void Main()
     {
         var configuration = new ConfigurationBuilder()
@@ -17,26 +38,55 @@ public static class Program
         var settings = configuration
             .GetAndValidateTypedSection("Settings", new SettingsValidator());
 
+        var processingMode = ProcessingModes[AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Select processing mode")
+                .AddChoices(ProcessingModes.Keys)
+        )];
+
         var keepProcessing = true;
 
         while (keepProcessing) {
-            keepProcessing = Process(settings).Continue;
+            keepProcessing = processingMode(settings).Continue;
         }
 
         AnsiConsole.WriteLine("Goodbye.");
         Environment.Exit(0);
     }
 
-    private static ProcessingResult Process(Settings settings)
+    private static ProcessingResult ExecuteEntireProcess(Settings settings)
+    {
+        foreach(var operation in Operations.Values)
+        {
+            var result = operation(settings);
+            if (!result.IsFaulted) continue;
+            AnsiConsole.WriteLine("The following error was encountered:");
+            AnsiConsole.WriteLine(result.Exception.Message);
+            return new()
+            {
+                Continue = false
+            };
+        }
+        AnsiConsole.WriteLine("All operations completed successfully.");
+        return new()
+        {
+            Continue = false
+        };
+    }
+
+    private static ProcessingResult ProcessIndividualStep(Settings settings)
     {
         var operation = GetOperation();
         var result = operation(settings);
 
-        if(result.IsFaulted)
-        {
-            AnsiConsole.WriteLine("The following error was encountered:");
-            AnsiConsole.WriteLine(result.Exception.Message);
-        }
+        if (!result.IsFaulted)
+            return new()
+            {
+                Continue = true
+            };
+
+        AnsiConsole.WriteLine("The following error was encountered:");
+        AnsiConsole.WriteLine(result.Exception.Message);
 
         return new()
         {
@@ -44,29 +94,14 @@ public static class Program
         };
     }
 
-    private static OperationDelegate GetOperation()
-    {
-        Dictionary<string, OperationDelegate> operations = new() {
-            { "Prepare bulletin", InitialBulletinPrepService.Process },
-            { "Convert Pages to PNG", PagesToPngService.Process },
-            { "Add Sermon", SermonService.Process },
-            { "Export Sermon", SermonExportService.Process },
-            { "Convert recording MKV to MP3", RecordingConversionService.Process },
-            { "Exit", _ =>
-                {
-                    Environment.Exit(0);
-                    return new Outcome<bool>(true);
-                }
-            },
-        };
-
-        var opKey = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-                .Title("Select operation")
-                .AddChoices(operations.Keys)
-            );
-        return operations[opKey];
-    }
+    private static OperationDelegate GetOperation() =>
+        Operations[
+            AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Select operation")
+                    .AddChoices(Operations.Keys)
+            )
+        ];
 
     private delegate Outcome<bool> OperationDelegate(Settings settings);
 
@@ -74,5 +109,4 @@ public static class Program
     {
         public required bool Continue { get; init; }
     }
-
 }
