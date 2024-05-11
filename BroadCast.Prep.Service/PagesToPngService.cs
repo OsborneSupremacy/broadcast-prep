@@ -20,7 +20,7 @@ public static class PagesToPngService
             foreach (var page in pages)
                 ConvertToPng(settings, page);
 
-            DeletePdfs(settings, pages);
+            DeleteTempFiles(settings, pages);
 
             return true;
         }
@@ -84,12 +84,12 @@ public static class PagesToPngService
         AnsiConsole.MarkupLine($"Page [green]{page.PageName}[/] converted to {outputFileName}");
     }
 
-    private static void DeletePdfs(Settings settings, List<PagesPng> pagesPngs)
+    private static void DeleteTempFiles(Settings settings, List<PagesPng> pagesPngs)
     {
-        foreach (var pdfName in pagesPngs.Select(page =>
-                     Path.Combine(settings.PagesDestinationFolder, $"{page.PageName}.pdf")))
+        foreach(var png in pagesPngs)
         {
-            File.Delete(pdfName);
+            File.Delete(Path.Combine(settings.PagesDestinationFolder, $"{png.PageName}.pdf"));
+            File.Delete(Path.Combine(settings.PagesDestinationFolder, $"{png.PageName}.pages"));
         }
     }
 }

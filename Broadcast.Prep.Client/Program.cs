@@ -10,8 +10,8 @@ public static class Program
 {
     private static readonly Dictionary<string, Func<Settings, ProcessingResult>> ProcessingModes = new()
     {
-        { "Execute entire process", ExecuteEntireProcess },
-        { "Process individual step", ProcessIndividualStep },
+        { "Execute entire workflow", ExecuteEntireWorkflow },
+        { "Execute one step", ExecuteOneStep },
     };
 
     private static readonly Dictionary<string, OperationDelegate> Operations = new() {
@@ -54,14 +54,21 @@ public static class Program
         Environment.Exit(0);
     }
 
-    private static ProcessingResult ExecuteEntireProcess(Settings settings)
+    private static ProcessingResult ExecuteEntireWorkflow(Settings settings)
     {
-        foreach(var operation in Operations.Values)
+        foreach(var operation in Operations)
         {
-            var result = operation(settings);
-            if (!result.IsFaulted) continue;
-            AnsiConsole.WriteLine("The following error was encountered:");
-            AnsiConsole.WriteLine(result.Exception.Message);
+            while (!AnsiConsole.Confirm($"{operation.Key} - Press Y to proceed.")) { }
+            var result = operation.Value(settings);
+            if (!result.IsFaulted)
+                continue;
+
+            AnsiConsole.WriteLine($"""
+                                   The following error was encountered:
+
+                                   {result.Exception.Message}
+
+                                   """);
             return new()
             {
                 Continue = false
@@ -74,7 +81,7 @@ public static class Program
         };
     }
 
-    private static ProcessingResult ProcessIndividualStep(Settings settings)
+    private static ProcessingResult ExecuteOneStep(Settings settings)
     {
         var operation = GetOperation();
         var result = operation(settings);
@@ -85,8 +92,12 @@ public static class Program
                 Continue = true
             };
 
-        AnsiConsole.WriteLine("The following error was encountered:");
-        AnsiConsole.WriteLine(result.Exception.Message);
+        AnsiConsole.WriteLine($"""
+                               The following error was encountered:
+
+                               {result.Exception.Message}
+
+                               """);
 
         return new()
         {
