@@ -41,83 +41,11 @@ public static class SermonExportService
                 );
 
             var selectedSermon = sermons[sermonId];
-            
-            var streamingInfo = $"""
-                                 Service of Worship, {selectedSermon.Date:MMMM dd, yyyy}
 
-                                 Worship Service of Grace & Peace Church, Oconomowoc, Wisconsin.
+            FileCreators
+                .ForEach(f => f(settings.PodcastArchiveFolder, selectedSermon));
 
-                                 {selectedSermon.Passage}. "{selectedSermon.Title}".
-                                 """;            
-
-            var template = $"""
-                            
-                            Streaming Info:
-                            
-                            {streamingInfo}
-
-                            Title:
-
-                            {selectedSermon.Title}
-
-                            Speaker:
-
-                            {selectedSermon.Speaker}
-
-                            Series:
-
-                            {selectedSermon.Series}
-
-                            Post Title:
-
-                            {selectedSermon.Title}, {selectedSermon.Passage}
-
-                            Post Content:
-
-                            {selectedSermon.ToFormattedContent()}
-
-                            Port URL:
-
-                            {selectedSermon.ToUrl()}
-
-                            Audio Title:
-
-                            {selectedSermon.Title}, {selectedSermon.Passage}
-
-                            Audio Artist:
-
-                            {selectedSermon.Speaker}
-
-                            Podcast Title:
-
-                            {selectedSermon.Title}
-
-                            Podcast Subtitle:
-
-                            {selectedSermon.Passage}
-
-                            Podcast Season
-
-                            {selectedSermon.Season}
-
-                            Podcast Episode:
-
-                            {selectedSermon.Episode}
-
-                            Audio File:
-
-                            {RecordingConversionService
-                                .GetMp4FileName(settings.PodcastArchiveFolder, selectedSermon.Title ?? "untitled")}
-
-
-                            """;
-
-            var outputFile = Path.Combine(settings.PodcastArchiveFolder, $"sermon-{selectedSermon.Id}.txt");
-            if (File.Exists(outputFile))
-                File.Delete(outputFile);
-            File.WriteAllText(outputFile, template);
-
-            AnsiConsole.MarkupLine($"Sermon exported to {outputFile}");
+            AnsiConsole.MarkupLine($"Sermon files exported.");
 
             return true;
         }
@@ -126,7 +54,115 @@ public static class SermonExportService
             return new Outcome<bool>(ex);
         }
     }
-    
+
+    private static readonly List<Action<string, Sermon>> FileCreators = new()
+    {
+        // ReSharper disable StaticMemberInitializerReferesToMemberBelow
+#pragma warning disable CS8604 // Possible null reference argument.
+        CreatePodcastInfoFile,
+        CreateServiceInfoFile,
+        CreateSermonInfoFile
+#pragma warning restore CS8604 // Possible null reference argument.
+    };
+
+    private static readonly Action<string, Sermon> CreatePodcastInfoFile = (archiveFolder, sermon) =>
+    {
+        var streamingInfo = $"""
+                             Service of Worship, {sermon.Date:MMMM dd, yyyy}
+
+                             Worship Service of Grace & Peace Church, Oconomowoc, Wisconsin.
+
+                             {sermon.Passage}. "{sermon.Title}".
+                             """;
+
+        var template = $"""
+                        
+                        Streaming Info:
+                        
+                        {streamingInfo}
+
+                        Title:
+
+                        {sermon.Title}
+
+                        Speaker:
+
+                        {sermon.Speaker}
+
+                        Series:
+
+                        {sermon.Series}
+
+                        Post Title:
+
+                        {sermon.Title}, {sermon.Passage}
+
+                        Blog Post / YouTube Post Content:
+
+                        {sermon.ToFormattedContent()}
+                        
+                        YouTube Post Title:
+                        
+                        {sermon.Passage}. "{sermon.Title}"
+
+                        Port URL:
+
+                        {sermon.ToUrl()}
+
+                        Audio Title:
+
+                        {sermon.Title}, {sermon.Passage}
+
+                        Audio Artist:
+
+                        {sermon.Speaker}
+
+                        Podcast Title:
+
+                        {sermon.Title}
+
+                        Podcast Subtitle:
+
+                        {sermon.Passage}
+
+                        Podcast Season
+
+                        {sermon.Season}
+
+                        Podcast Episode:
+
+                        {sermon.Episode}
+
+                        Audio File:
+
+                        {RecordingConversionService
+                            .GetMp4FileName(archiveFolder, sermon.Title)}
+
+
+                        """;
+
+            var outputFile = Path.Combine(archiveFolder, $"sermon-{sermon.Id}.txt");
+            if (File.Exists(outputFile))
+                File.Delete(outputFile);
+            File.WriteAllText(outputFile, template);
+    };
+
+    private static readonly Action<string, Sermon> CreateServiceInfoFile = (archiveFolder, sermon) =>
+    {
+        var outputFile = Path.Combine(archiveFolder, $"_service-info.txt");
+        if (File.Exists(outputFile))
+            File.Delete(outputFile);
+        File.WriteAllText(outputFile, $"Service of Worship, {sermon.Date:MMMM dd, yyyy}");
+    };
+
+    private static readonly Action<string, Sermon> CreateSermonInfoFile = (archiveFolder, sermon) =>
+    {
+        var outputFile = Path.Combine(archiveFolder, $"_verse-title.txt");
+        if (File.Exists(outputFile))
+            File.Delete(outputFile);
+        File.WriteAllText(outputFile, $"{sermon.Passage}. \"{sermon.Title}\"");
+    };
+
     private static string ToFormattedContent(this Sermon sermon) =>
         $"""
          "{sermon.Title}" {sermon.Passage}
