@@ -16,7 +16,11 @@ public static class BulletinCopyService
             .Select(p => Path.Combine(settings.PagesDestinationFolder, $"{p.PageName}.pages"));
 
         foreach (var destination in pageDestinations)
+        {
+            if(targetFile.Equals(destination, StringComparison.CurrentCultureIgnoreCase))
+                continue;
             File.Copy(targetFile, destination, true);
+        }
 
         AnsiConsole.WriteLine("Current.pages has been copied.");
 
