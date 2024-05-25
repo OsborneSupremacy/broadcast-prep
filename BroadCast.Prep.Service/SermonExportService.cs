@@ -42,8 +42,9 @@ public static class SermonExportService
 
             var selectedSermon = sermons[sermonId];
 
-            FileCreators
-                .ForEach(f => f(settings.PodcastArchiveFolder, selectedSermon));
+            CreatePodcastInfoFile(settings.PodcastArchiveFolder, selectedSermon);
+            CreateServiceInfoFile(settings.PodcastArchiveFolder, selectedSermon);
+            CreateSermonInfoFile(settings.PodcastArchiveFolder, selectedSermon);
 
             AnsiConsole.MarkupLine($"Sermon files exported.");
 
@@ -54,16 +55,6 @@ public static class SermonExportService
             return new Outcome<bool>(ex);
         }
     }
-
-    private static readonly List<Action<string, Sermon>> FileCreators = new()
-    {
-        // ReSharper disable StaticMemberInitializerReferesToMemberBelow
-#pragma warning disable CS8604 // Possible null reference argument.
-        CreatePodcastInfoFile,
-        CreateServiceInfoFile,
-        CreateSermonInfoFile
-#pragma warning restore CS8604 // Possible null reference argument.
-    };
 
     private static readonly Action<string, Sermon> CreatePodcastInfoFile = (archiveFolder, sermon) =>
     {
