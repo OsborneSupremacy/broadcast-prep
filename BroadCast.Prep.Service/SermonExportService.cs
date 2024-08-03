@@ -87,6 +87,10 @@ public static class SermonExportService
                         Post Title:
 
                         {sermon.Title}, {sermon.Passage}
+                        
+                        Facebook Post Content:
+                        
+                        {sermon.ToFacebookFormattedContent()}
 
                         Blog Post / YouTube Post Content:
 
@@ -159,6 +163,24 @@ public static class SermonExportService
          "{sermon.Title}" {sermon.Passage}
          {sermon.Speaker}, {sermon.Date:MMMM dd, yyyy}
          """;
+
+    private static string ToFacebookFormattedContent(this Sermon sermon)
+    {
+        return $"""
+
+
+               Our {sermon.Date:dddd}, {sermon.Date:M/d} worship service will be livestreamed on Youtube starting at 10 AM, at the link below.
+               
+               ______-LINK-_______
+               
+               {sermon.Passage}. "{sermon.Title}".
+               
+               The worship guide is available in PDF format at the link below.
+               
+               ______-LINK-_______
+
+               """;
+    }
 
     private static string ToUrl(this Sermon sermon) =>
         @$"{(sermon.Title ?? string.Empty)

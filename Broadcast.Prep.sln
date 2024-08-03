@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BroadCast.Prep.Models", "Br
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Broadcast.Prep.Data", "Broadcast.Prep.Data\Broadcast.Prep.Data.csproj", "{98706AC5-8C02-451B-A034-19BD1192BC44}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Broadcast.Prep.Service.Tests", "Broadcast.Prep.Service.Tests\Broadcast.Prep.Service.Tests.csproj", "{54147EA8-EF44-4262-BC99-46FC6CE297C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{98706AC5-8C02-451B-A034-19BD1192BC44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98706AC5-8C02-451B-A034-19BD1192BC44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98706AC5-8C02-451B-A034-19BD1192BC44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54147EA8-EF44-4262-BC99-46FC6CE297C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54147EA8-EF44-4262-BC99-46FC6CE297C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54147EA8-EF44-4262-BC99-46FC6CE297C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54147EA8-EF44-4262-BC99-46FC6CE297C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

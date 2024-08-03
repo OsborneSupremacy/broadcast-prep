@@ -1,3 +1,6 @@
+using ImageMagick;
+using SixLabors.ImageSharp.Formats.Tga;
+
 namespace BroadCast.Prep.Service;
 
 public static class PagesToPngService
@@ -91,4 +94,18 @@ public static class PagesToPngService
             File.Delete(Path.Combine(settings.PagesDestinationFolder, $"{png.PageName}.pages"));
         }
     }
+
+    public static void InvertImage(string pdfPath)
+    {
+        var outputFileName = Path.ChangeExtension(pdfPath, ".converted.png");
+
+        using var image = new MagickImage();
+        image.Read(pdfPath, MagickFormat.Pdf);
+        image.Format = MagickFormat.Png;
+        image.Density = new Density(300);
+        image.Quality = 100;
+        //image.Negate(Channels.RGB);
+        image.Write(outputFileName);
+    }
+
 }
