@@ -168,16 +168,15 @@ public static class SermonExportService
     {
         return $"""
 
-
                Our {sermon.Date:dddd}, {sermon.Date:M/d} worship service will be livestreamed on Youtube starting at 10 AM, at the link below.
                
-               ______-LINK-_______
+               🔗 ______-LINK-_______
                
                {sermon.Passage}. "{sermon.Title}".
                
                The worship guide is available in PDF format at the link below.
                
-               ______-LINK-_______
+               📖 ______-LINK-_______
 
                """;
     }
