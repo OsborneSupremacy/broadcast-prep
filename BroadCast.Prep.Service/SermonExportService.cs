@@ -100,7 +100,7 @@ public static class SermonExportService
                         
                         {sermon.Passage}. "{sermon.Title}"
 
-                        Port URL:
+                        Post URL:
 
                         {sermon.ToUrl()}
 
