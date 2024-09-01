@@ -67,74 +67,83 @@ public static class SermonExportService
                              """;
 
         var template = $"""
-                        
-                        Streaming Info:
-                        
-                        {streamingInfo}
+                         
+                         # SERVICE & SERMON INFO
+                         
+                         ## Restream Info
+                         
+                         {streamingInfo}
+                         
+                         ## Facebook Post
+                         
+                         {sermon.ToFacebookFormattedContent()}
+                         
+                         ## YouTube Video
 
-                        Title:
+                         ### YouTube Title:
 
-                        {sermon.Title}
+                         {sermon.Title}
 
-                        Speaker:
+                         ### YouTube Description
+                         
+                         {sermon.ToFormattedContent()}
 
-                        {sermon.Speaker}
+                         ## SquareSpace Blog Post
+                         
+                         ### Blog Post Title
+                         
+                         {sermon.Title}, {sermon.Passage}
+                         
+                         ### Blog Post Excerpt
+                         
+                         {sermon.ToFormattedContent()}
+                         
+                         ### Blog Post Post URL
+                         
+                         {sermon.ToUrl()}
+                         
+                         ### Blog PostAuthor
+                         
+                         {sermon.Speaker}
 
-                        Series:
-
-                        {sermon.Series}
-
-                        Post Title:
-
-                        {sermon.Title}, {sermon.Passage}
-                        
-                        Facebook Post Content:
-                        
-                        {sermon.ToFacebookFormattedContent()}
-
-                        Blog Post / YouTube Post Content:
-
-                        {sermon.ToFormattedContent()}
-                        
-                        YouTube Post Title:
-                        
-                        {sermon.Passage}. "{sermon.Title}"
-
-                        Post URL:
-
-                        {sermon.ToUrl()}
-
-                        Audio Title:
-
-                        {sermon.Title}, {sermon.Passage}
-
-                        Audio Artist:
-
-                        {sermon.Speaker}
-
-                        Podcast Title:
-
-                        {sermon.Title}
-
-                        Podcast Subtitle:
-
-                        {sermon.Passage}
-
-                        Podcast Season
-
-                        {sermon.Season}
-
-                        Podcast Episode:
-
-                        {sermon.Episode}
-
-                        Audio File:
-
-                        {RecordingConversionService
+                         ### Blog Post Categories
+                         
+                         {sermon.Series}
+                         
+                         ### Audio Track
+                         
+                         {RecordingConversionService
                             .GetMp4FileName(archiveFolder, sermon.Title)}
 
+                         ### Audio Title
 
-                        """;
+                         {sermon.Title}, {sermon.Passage}
+
+                         ### Audio Author / Artist
+
+                         {sermon.Speaker}
+
+                         ### Podcast Title
+
+                         {sermon.Title}
+                         
+                         ### Podcast Subtitle
+                         
+                         {sermon.Passage}
+
+                         ### Podcast Summary
+                         
+                         {sermon.ToFormattedContent()}
+
+                         ### Podcast Season Number
+
+                         {sermon.Season}
+
+                         ### Podcast Episode Number
+
+                         {sermon.Episode}
+
+                         """;
 
             var outputFile = Path.Combine(archiveFolder, $"sermon-{sermon.Id}.txt");
             if (File.Exists(outputFile))
