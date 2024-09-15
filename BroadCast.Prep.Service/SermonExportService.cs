@@ -82,7 +82,7 @@ public static class SermonExportService
 
                          ### YouTube Title:
 
-                         {sermon.Title}
+                         {sermon.Passage}. "{sermon.Title}"
 
                          ### YouTube Description
                          
@@ -191,7 +191,7 @@ public static class SermonExportService
     }
 
     private static string ToUrl(this Sermon sermon) =>
-        @$"{(sermon.Title ?? string.Empty)
+        $"{sermon.Title
             .ToLowerInvariant()
             .Replace(" ", "-")
             .Replace(":", "")
