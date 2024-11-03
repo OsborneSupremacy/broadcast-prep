@@ -21,14 +21,12 @@ public static class SermonExportService
             table.AddColumn("Speaker");
 
             foreach (var sermon in sermons.Values)
-            {
                 table.AddRow(
                     sermon.Id.ToString(),
                     sermon.Date.ToString("yyyy-MM-dd"),
                     sermon.Title,
                     sermon.Speaker
                 );
-            }
 
             AnsiConsole.Write(table);
 
@@ -102,7 +100,7 @@ public static class SermonExportService
                          
                          {sermon.ToUrl()}
                          
-                         ### Blog PostAuthor
+                         ### Blog Post Author
                          
                          {sermon.Speaker}
 
