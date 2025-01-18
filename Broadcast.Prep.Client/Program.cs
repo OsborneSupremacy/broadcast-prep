@@ -20,7 +20,7 @@ public static class Program
         { "Convert Pages to PNG", PagesToPngService.Process },
         { "Add Sermon", SermonService.Process },
         { "Export Sermon", SermonExportService.Process },
-        { "Convert recording MKV to MP3", RecordingConversionService.Process },
+        //{ "Convert recording MKV to MP3", RecordingConversionService.Process },
         { "Exit", _ =>
             {
                 Environment.Exit(0);

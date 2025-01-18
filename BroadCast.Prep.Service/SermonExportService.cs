@@ -62,6 +62,11 @@ public static class SermonExportService
                              Worship Service of Grace & Peace Church, Oconomowoc, Wisconsin.
 
                              {sermon.Passage}. "{sermon.Title}".
+                             
+                             The worship guide is available in PDF format at the link below.
+                             
+                             📖 ______-LINK-_______
+
                              """;
 
         var template = $"""
@@ -85,6 +90,10 @@ public static class SermonExportService
                          ### YouTube Description
                          
                          {sermon.ToFormattedContent()}
+                         
+                         ### YouTube Tags
+                         
+                         PCA, Christianity, Grace&Peace, Oconomowoc
 
                          ## SquareSpace Blog Post
                          
@@ -151,7 +160,7 @@ public static class SermonExportService
 
     private static readonly Action<string, Sermon> CreateServiceInfoFile = (archiveFolder, sermon) =>
     {
-        var outputFile = Path.Combine(archiveFolder, $"_service-info.txt");
+        var outputFile = Path.Combine(archiveFolder, "_service-info.txt");
         if (File.Exists(outputFile))
             File.Delete(outputFile);
         File.WriteAllText(outputFile, $"Service of Worship, {sermon.Date:MMMM dd, yyyy}");
