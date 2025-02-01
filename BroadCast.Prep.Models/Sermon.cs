@@ -17,4 +17,6 @@ public record Sermon
     public required int Season { get; init; }
 
     public required int Episode { get; init; }
+
+    public required string PdfUrl { get; init; }
 }

@@ -65,7 +65,7 @@ public static class SermonExportService
                              
                              The worship guide is available in PDF format at the link below.
                              
-                             📖 ______-LINK-_______
+                             📖 {sermon.PdfUrl}
 
                              """;
 

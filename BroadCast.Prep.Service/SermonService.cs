@@ -20,7 +20,8 @@ public static class SermonService
                 Title = PromptForText("Title"),
                 Date = PromptForDateOnly("Date", GetDefaultDate()),
                 Season = PromptForInt("Season", data.GetSeasonBySeries(series)),
-                Episode = PromptForInt("Episode", data.GetLastEpisodeBySeries(series) + 1)
+                Episode = PromptForInt("Episode", data.GetLastEpisodeBySeries(series) + 1),
+                PdfUrl = PromptForUrl("Shared URL of bulletin")
             };
 
             data.InsertAsync(sermon).GetAwaiter().GetResult();
@@ -67,6 +68,17 @@ public static class SermonService
                     ? ValidationResult.Error($"{prompt} must not be empty.")
                     : ValidationResult.Success())
         );
+
+    private static string PromptForUrl(string prompt) =>
+        AnsiConsole.Prompt(
+            new TextPrompt<string>($"{prompt}:")
+                .Validate(value => string.IsNullOrWhiteSpace(value) && MustBeValidUrl(value)
+                    ? ValidationResult.Error($"{prompt} must not be empty and a valid URL.")
+                    : ValidationResult.Success())
+        );
+
+    private static bool MustBeValidUrl(string value) =>
+        !Uri.TryCreate(value, UriKind.Absolute, out _);
     
     private static string PromptForListItemOrNew(
         IEnumerable<string> items,
