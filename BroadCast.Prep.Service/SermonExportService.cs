@@ -1,6 +1,8 @@
-﻿namespace BroadCast.Prep.Service;
+﻿using System.Text.RegularExpressions;
 
-public static class SermonExportService
+namespace BroadCast.Prep.Service;
+
+public static partial class SermonExportService
 {
     public static Outcome<bool> Process(Settings settings)
     {
@@ -201,18 +203,13 @@ public static class SermonExportService
         $"{sermon.Title
             .ToLowerInvariant()
             .Replace(" ", "-")
-            .Replace(":", "")
+            .Replace(":", string.Empty)
             .Replace(" & ", " and ")
             .RemoveSpecialUrlChars()}";
 
     private static string RemoveSpecialUrlChars(this string uri) =>
-        uri
-            .Replace(":", "")
-            .Replace("/", "")
-            .Replace("!", "")
-            .Replace("?", "")
-            .Replace("#", "")
-            .Replace("[", "")
-            .Replace("]", "")
-            .Replace("@", "");
+        SpecialUrlCharsRegex().Replace(uri, string.Empty);
+
+    [GeneratedRegex(@"[:\/!?#\[\]@]")]
+    private static partial Regex SpecialUrlCharsRegex();
 }
