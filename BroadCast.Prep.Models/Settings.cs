@@ -4,21 +4,23 @@ namespace BroadCast.Prep.Models;
 
 public record Settings
 {
-    public string DataStorePath { get; set; } = default!;
+    public string DataStorePath { get; init; } = string.Empty;
 
-    public string RecordingSourceFolder { get; init; } = default!;
+    public string NormalizedBulletinFolder { get; init; } = string.Empty;
 
-    public string PodcastArchiveFolder { get; init; } = default!;
+    public string RecordingSourceFolder { get; init; } = string.Empty;
 
-    public string PagesSourceFolder { get; init; } = default!;
+    public string PodcastArchiveFolder { get; init; } = string.Empty;
 
-    public string PagesDestinationFolder { get; init; } = default!;
-    
-    public List<PagesPng> PagesToConvertToPng { get; init;} = new();
+    public string PagesSourceFolder { get; init; } = string.Empty;
 
-    public string DateTxtPath { get; init; } = default!;
+    public string PagesDestinationFolder { get; init; } = string.Empty;
 
-    public string TitleAndDescriptionTxtPath { get; init; } = default!;
+    public List<PagesPng> PagesToConvertToPng { get; init; } = [];
+
+    public string DateTxtPath { get; init; } = string.Empty;
+
+    public string TitleAndDescriptionTxtPath { get; init; } = string.Empty;
 }
 
 public class SettingsValidator : AbstractValidator<Settings>
@@ -28,6 +30,10 @@ public class SettingsValidator : AbstractValidator<Settings>
         RuleFor(x => x.DataStorePath)
             .NotEmpty()
             .Must(x => new FileInfo(x).Exists);
+
+        RuleFor(x => x.NormalizedBulletinFolder)
+            .NotEmpty()
+            .Must(x => new DirectoryInfo(x).Exists);
 
         RuleFor(x => x.RecordingSourceFolder)
             .NotEmpty()

@@ -15,9 +15,10 @@ public static class Program
     };
 
     private static readonly Dictionary<string, OperationDelegate> Operations = new() {
-        { "Prepare bulletin", InitialBulletinPrepService.Process },
-        { "Make Copies of Current.pages", BulletinCopyService.Process },
-        { "Convert Pages to PNG", PagesToPngService.Process },
+        //{ "Prepare bulletin", InitialBulletinPrepService.Process },
+        //{ "Make Copies of Current.pages", BulletinCopyService.Process },
+        //{ "Convert Pages to PNG", PagesToPngService.Process },
+        { "Extract text from PDF", PdfNormalizationService.Process },
         { "Add Sermon", SermonService.Process },
         { "Export Sermon", SermonExportService.Process },
         //{ "Convert recording MKV to MP3", RecordingConversionService.Process },

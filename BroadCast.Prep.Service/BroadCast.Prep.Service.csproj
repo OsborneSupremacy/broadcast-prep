@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.Textract" Version="3.7.400.104" />
     <PackageReference Include="CliWrap" Version="3.6.7" />
     <PackageReference Include="Magick.NET-Q8-arm64" Version="14.2.0" />
     <PackageReference Include="OsborneSupremacy.Extensions.AspNet" Version="3.1.0" />
+    <PackageReference Include="PDFsharp" Version="6.1.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
     <PackageReference Include="Spectre.Console" Version="0.49.1" />
   </ItemGroup>
