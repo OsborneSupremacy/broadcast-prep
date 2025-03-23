@@ -72,13 +72,17 @@ public static class SermonService
     private static string PromptForUrl(string prompt) =>
         AnsiConsole.Prompt(
             new TextPrompt<string>($"{prompt}:")
-                .Validate(value => string.IsNullOrWhiteSpace(value) && MustBeValidUrl(value)
+                .Validate(value => MustBeValidUrlOrEmpty(value)
                     ? ValidationResult.Error($"{prompt} must not be empty and a valid URL.")
                     : ValidationResult.Success())
         );
 
-    private static bool MustBeValidUrl(string value) =>
-        !Uri.TryCreate(value, UriKind.Absolute, out _);
+    private static bool MustBeValidUrlOrEmpty(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return true;
+        return !Uri.TryCreate(value, UriKind.Absolute, out _);
+    }
     
     private static string PromptForListItemOrNew(
         IEnumerable<string> items,

@@ -59,13 +59,13 @@ public static partial class SermonExportService
     private static readonly Action<string, Sermon> CreatePodcastInfoFile = (archiveFolder, sermon) =>
     {
         var streamingInfo = $"""
-                             Service of Worship, {sermon.Date:MMMM dd, yyyy}
+                             Service of Worship, {sermon.Date:MMMM d, yyyy}
 
                              Worship Service of Grace & Peace Church, Oconomowoc, Wisconsin.
 
                              {sermon.Passage}. "{sermon.Title}".
                              
-                             The worship guide is available in PDF format at the link below.
+                             The worship guide is available at the link below.
                              
                              📖 {sermon.PdfUrl}
 
@@ -165,7 +165,7 @@ public static partial class SermonExportService
         var outputFile = Path.Combine(archiveFolder, "_service-info.txt");
         if (File.Exists(outputFile))
             File.Delete(outputFile);
-        File.WriteAllText(outputFile, $"Service of Worship, {sermon.Date:MMMM dd, yyyy}");
+        File.WriteAllText(outputFile, $"Service of Worship, {sermon.Date:MMMM d, yyyy}");
     };
 
     private static readonly Action<string, Sermon> CreateSermonInfoFile = (archiveFolder, sermon) =>
@@ -179,7 +179,7 @@ public static partial class SermonExportService
     private static string ToFormattedContent(this Sermon sermon) =>
         $"""
          "{sermon.Title}" {sermon.Passage}
-         {sermon.Speaker}, {sermon.Date:MMMM dd, yyyy}
+         {sermon.Speaker}, {sermon.Date:MMMM d, yyyy}
          """;
 
     private static string ToFacebookFormattedContent(this Sermon sermon)
@@ -192,9 +192,9 @@ public static partial class SermonExportService
                
                {sermon.Passage}. "{sermon.Title}".
                
-               The worship guide is available in PDF format at the link below.
+               The worship guide is available at the link below.
                
-               📖 ______-LINK-_______
+               📖 {sermon.PdfUrl}
 
                """;
     }
