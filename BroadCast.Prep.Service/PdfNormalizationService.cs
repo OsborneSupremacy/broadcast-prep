@@ -8,23 +8,29 @@ namespace BroadCast.Prep.Service;
 
 public static class PdfNormalizationService
 {
+    private static readonly BlockType[] TextBlockTypes =
+    [
+        BlockType.LINE,
+        BlockType.WORD
+    ];
+
     public static Outcome<bool> Process(Settings settings)
     {
         var sourceDoc = GetSourceDoc(settings);
 
-        var normalizedDoc = Path.Combine(
+        var plainTextDoc = Path.Combine(
             settings.NormalizedBulletinFolder,
-            Path.ChangeExtension(sourceDoc.Value.Name, ".json")
+            Path.ChangeExtension(sourceDoc.Value.Name, ".text")
         );
 
         // check if the file already exists
-        if (File.Exists(normalizedDoc))
+        if (File.Exists(plainTextDoc))
         {
-            AnsiConsole.MarkupLine($"File {normalizedDoc} already exists.");
+            AnsiConsole.MarkupLine($"File {plainTextDoc} already exists.");
             return true;
         }
 
-        AnsiConsole.MarkupLine($"File {normalizedDoc} does not exist. Will require normalization.");
+        AnsiConsole.MarkupLine($"File {plainTextDoc} does not exist. Will require normalization.");
 
         if(!new CredentialProfileStoreChain().TryGetAWSCredentials("personal", out var credentials))
         {
@@ -33,6 +39,9 @@ public static class PdfNormalizationService
         }
 
         var textractClient = new AmazonTextractClient(credentials);
+
+        // stream output to plain text file
+        using var writer = new StreamWriter(plainTextDoc);
 
         var pages = GetPages(sourceDoc.Value.FullName);
 
@@ -48,7 +57,35 @@ public static class PdfNormalizationService
             };
             var analyzeResponse = textractClient
                 .AnalyzeDocumentAsync(request).GetAwaiter().GetResult();
+
+            var lastBlockType = BlockType.LINE;
+
+            foreach (var block in analyzeResponse
+                         .Blocks.Where(b => TextBlockTypes.Contains(b.BlockType)))
+            {
+                AnsiConsole.WriteLine($"Content: {block.Text}");
+
+                if(lastBlockType != block.BlockType)
+                    writer.WriteLine();
+
+                if (block.BlockType == BlockType.WORD)
+                    writer.Write($"{block.Text} ");
+
+                if (block.BlockType == BlockType.LINE)
+                {
+                    writer.WriteLine(block.Text);
+                    writer.WriteLine();
+                }
+
+                lastBlockType = block.BlockType;
+            }
         }
+
+        // close the writer
+        writer.Flush();
+        writer.Close();
+
+        AnsiConsole.WriteLine("Text extraction complete. File saved to {plainTextDoc}");
 
         return true;
     }
