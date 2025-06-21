@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using BroadCast.Prep.Models;
+﻿using BroadCast.Prep.Models;
 using BroadCast.Prep.Service;
+using Microsoft.Extensions.Configuration;
 using OsborneSupremacy.Extensions.AspNet;
 using Spectre.Console;
 
@@ -15,13 +15,8 @@ public static class Program
     };
 
     private static readonly Dictionary<string, OperationDelegate> Operations = new() {
-        //{ "Prepare bulletin", InitialBulletinPrepService.Process },
-        //{ "Make Copies of Current.pages", BulletinCopyService.Process },
-        //{ "Convert Pages to PNG", PagesToPngService.Process },
-        { "Extract text from PDF", PdfNormalizationService.Process },
         { "Add Sermon", SermonService.Process },
         { "Export Sermon", SermonExportService.Process },
-        //{ "Convert recording MKV to MP3", RecordingConversionService.Process },
         { "Exit", _ =>
             {
                 Environment.Exit(0);

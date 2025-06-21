@@ -42,11 +42,11 @@ public static partial class SermonExportService
 
             var selectedSermon = sermons[sermonId];
 
-            CreatePodcastInfoFile(settings.PodcastArchiveFolder, selectedSermon);
-            CreateServiceInfoFile(settings.PodcastArchiveFolder, selectedSermon);
-            CreateSermonInfoFile(settings.PodcastArchiveFolder, selectedSermon);
+            CreatePodcastInfoFile(settings.AssetPath, selectedSermon);
+            CreateServiceInfoFile(settings.AssetPath, selectedSermon);
+            CreateSermonInfoFile(settings.AssetPath, selectedSermon);
 
-            AnsiConsole.MarkupLine($"Sermon files exported.");
+            AnsiConsole.MarkupLine("Sermon files exported.");
 
             return true;
         }
@@ -118,11 +118,6 @@ public static partial class SermonExportService
                          ### Blog Post Categories
                          
                          {sermon.Series}
-                         
-                         ### Audio Track
-                         
-                         {RecordingConversionService
-                            .GetMp4FileName(archiveFolder, sermon.Title)}
 
                          ### Audio Title
 
@@ -162,7 +157,7 @@ public static partial class SermonExportService
 
     private static readonly Action<string, Sermon> CreateServiceInfoFile = (archiveFolder, sermon) =>
     {
-        var outputFile = Path.Combine(archiveFolder, "_service-info.txt");
+        var outputFile = Path.Combine(archiveFolder, "01-service-info.txt");
         if (File.Exists(outputFile))
             File.Delete(outputFile);
         File.WriteAllText(outputFile, $"Service of Worship, {sermon.Date:MMMM d, yyyy}");
@@ -170,7 +165,7 @@ public static partial class SermonExportService
 
     private static readonly Action<string, Sermon> CreateSermonInfoFile = (archiveFolder, sermon) =>
     {
-        var outputFile = Path.Combine(archiveFolder, $"_verse-title.txt");
+        var outputFile = Path.Combine(archiveFolder, "02-verse-title.txt");
         if (File.Exists(outputFile))
             File.Delete(outputFile);
         File.WriteAllText(outputFile, $"{sermon.Passage}. \"{sermon.Title}\"");
