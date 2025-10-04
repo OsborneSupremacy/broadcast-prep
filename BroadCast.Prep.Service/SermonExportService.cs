@@ -26,7 +26,7 @@ public static partial class SermonExportService
                 table.AddRow(
                     sermon.Id.ToString(),
                     sermon.Date.ToString("yyyy-MM-dd"),
-                    sermon.Title,
+                    sermon.TitleOrPassage(),
                     sermon.Speaker
                 );
 
@@ -63,7 +63,7 @@ public static partial class SermonExportService
 
                              Worship Service of Grace & Peace Church, Oconomowoc, Wisconsin.
 
-                             {sermon.Passage}. "{sermon.Title}".
+                             {sermon.PassageAndTitle()}
                              
                              The worship guide is available at the link below.
                              
@@ -87,7 +87,7 @@ public static partial class SermonExportService
 
                          ### YouTube Title:
 
-                         {sermon.Passage}. "{sermon.Title}"
+                         {sermon.PassageAndTitle()}
 
                          ### YouTube Description
                          
@@ -101,7 +101,7 @@ public static partial class SermonExportService
                          
                          ### Blog Post Title
                          
-                         {sermon.Title}, {sermon.Passage}
+                         {sermon.BlogTitle()}
                          
                          ### Blog Post Excerpt
                          
@@ -121,7 +121,7 @@ public static partial class SermonExportService
 
                          ### Audio Title
 
-                         {sermon.Title}, {sermon.Passage}
+                         {sermon.BlogTitle()}
 
                          ### Audio Author / Artist
 
@@ -168,12 +168,12 @@ public static partial class SermonExportService
         var outputFile = Path.Combine(archiveFolder, "02-verse-title.txt");
         if (File.Exists(outputFile))
             File.Delete(outputFile);
-        File.WriteAllText(outputFile, $"{sermon.Passage}. \"{sermon.Title}\"");
+        File.WriteAllText(outputFile, sermon.PassageAndQuotedTitle());
     };
 
     private static string ToFormattedContent(this Sermon sermon) =>
         $"""
-         "{sermon.Title}" {sermon.Passage}
+         {sermon.QuotedTitleAndPassage()}.
          {sermon.Speaker}, {sermon.Date:MMMM d, yyyy}
          """;
 
@@ -185,7 +185,7 @@ public static partial class SermonExportService
                
                🔗 ______-LINK-_______
                
-               {sermon.Passage}. "{sermon.Title}".
+               {sermon.PassageAndQuotedTitle()}
                
                The worship guide is available at the link below.
                

@@ -12,12 +12,16 @@ public static class SermonService
 
             var series = PromptForListItemOrNew(data.GetDistinctSeries(), "Series");
 
+            var title = PromptForSermonTitle();
+            var untitled = string.IsNullOrEmpty(title);
+
             var sermon = new Sermon
             {
                 Series = series,
                 Speaker = PromptForListItemOrNew(data.GetDistinctSpeakers(), "Speaker"),
                 Passage = PromptForText("Passage"),
-                Title = PromptForText("Title"),
+                Untitled = untitled,
+                Title = title,
                 Date = PromptForDateOnly("Date", GetDefaultDate()),
                 Season = PromptForInt("Season", data.GetSeasonBySeries(series)),
                 Episode = PromptForInt("Episode", data.GetLastEpisodeBySeries(series) + 1),
@@ -68,6 +72,11 @@ public static class SermonService
                     ? ValidationResult.Error($"{prompt} must not be empty.")
                     : ValidationResult.Success())
         );
+
+    private static string PromptForSermonTitle() =>
+        !AnsiConsole.Confirm("Does this sermon have a title?")
+            ? string.Empty
+            : PromptForText("Title");
 
     private static string PromptForUrl(string prompt) =>
         AnsiConsole.Prompt(

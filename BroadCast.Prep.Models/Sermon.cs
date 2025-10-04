@@ -10,6 +10,8 @@ public record Sermon
 
     public required string Passage { get; init; }
 
+    public bool? Untitled { get; init; }
+
     public required string Title { get; init; }
 
     public required DateOnly Date { get; init; }
