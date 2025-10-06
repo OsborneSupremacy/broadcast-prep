@@ -173,7 +173,7 @@ public static partial class SermonExportService
 
     private static string ToFormattedContent(this Sermon sermon) =>
         $"""
-         {sermon.QuotedTitleAndPassage()}.
+         {sermon.QuotedTitleAndPassage()}
          {sermon.Speaker}, {sermon.Date:MMMM d, yyyy}
          """;
 
