@@ -49,10 +49,12 @@ public class SermonData
             .MaxBy(s => s.Date)?
             .Season ?? 0;
 
-        if (season != 0) return season;
+        var isBrandNewSeries = (season == 0);
+        if(!isBrandNewSeries)
+            return season;
 
         return GetAllAsync()
-            .Max(s => s.Season);
+            .Max(s => s.Season) + 1;
     }
 
     public int GetLastEpisodeBySeries(string series)

@@ -60,7 +60,7 @@ public static class SermonService
         AnsiConsole.Prompt(
             new TextPrompt<int>($"{prompt}:")
                 .DefaultValue(defaultValue)
-                .Validate(value => value == default
+                .Validate(value => value == 0
                     ? ValidationResult.Error($"{prompt} must be a valid integer.")
                     : ValidationResult.Success())
             );
